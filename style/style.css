@@ -1,0 +1,157 @@
+/* polices */
+@font-face {
+    font-family: "Balthazar";
+    src: url(../police/balthazar.ttf) format("truetype");
+}
+@font-face {
+    font-family: "Calibri";
+    src: url(../police/calibri.ttf) format("truetype");
+}
+
+
+
+
+/* balises */
+html, body
+{
+	height:100%;
+	margin:0;
+	padding:0;
+	margin-right:auto;
+	margin-left:auto;
+	max-width:1000px;
+}
+body{
+	Background: #af4fa2;
+}
+h1, h2{
+	font-size: 500%;
+	font-family: "Balthazar";
+	margin-top:0;
+}
+h2{
+	font-size:300%;
+	text-align:center;
+}
+p{
+	font-size:300%;
+	font-family: Calibri;
+}
+form{
+	text-align:center;
+}
+input{
+	border-radius:10px;
+}
+th{
+	font-size:200%;
+	font-weight:bold;
+	font-family:calibri;
+}
+table{
+	width:100%;
+	margin-bottom:10%;
+}
+hr{
+	margin-top:3%;
+	margin-bottom:3%;
+}
+td, #afficheNbResult{
+	font-size:150%;
+	font-weight:normal;
+	font-family:calibri;
+	text-align:center;
+}
+
+
+
+
+/* IDs */
+#page{
+	min-height: 100%;
+	position: relative;
+	margin-bottom:-50px;
+}
+#btn{
+	text-align:center;
+}
+#deconnexion{
+	float:right;
+	margin-bottom:20%;
+	text-align:center;
+}
+#titre{
+	float:left;
+}
+#menu{
+	position:absolute;
+	text-align:center;
+	margin-top:35%;
+	width:100%;
+	max-width:1000px;
+}
+#centrer_titre{
+	text-align:center;
+	margin-top:0;
+}
+#p_page{
+	position: relative;
+	height:25px;
+	font-family:Calibri;
+	bottom:0;
+	text-align:center;
+	margin-top:10px;
+}
+#home_bouton{
+	position:absolute;
+	width:5%;
+}
+#stopRequeteTousEtats{
+	text-align:center;
+	font-size:200%;
+}
+#afficheNbResult{
+	margin:0;
+}
+#listMateriaux, #listNatures, #listPrestations{
+	font-size:50%;
+}
+
+
+
+
+/* classes */
+.authentification{
+	width: 60%;
+	font-size:80%;
+}
+.bouton{
+	font-size: 300%;
+	font-family:Calibri;
+}
+.recherche{
+	text-align:center;
+	font-size:200%;
+	margin-top:3%;
+}
+.labelElement{
+	font-size:200%;
+	margin:0;
+}
+.element{
+	margin-left:2%;
+	margin-right:2%;
+	display:inline-block;
+}
+.valueElement{
+	font-size:100%;
+}
+.composants{
+	font-size:150%;
+}
+.ligne{
+	text-align:center;
+	margin-bottom:2%;
+	margin-left:0;
+	margin-right:0;
+}
