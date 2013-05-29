@@ -102,9 +102,12 @@ td, #afficheNbResult{
 	text-align:center;
 	margin-top:10px;
 }
-#home_bouton{
+#home_bouton, #save_bouton{
 	position:absolute;
 	width:5%;
+}
+#save_bouton{
+	right:0;
 }
 #stopRequeteTousEtats{
 	text-align:center;
@@ -157,36 +160,36 @@ td, #afficheNbResult{
 }
 .onglet
 {
-           display:inline-block;
-           padding:3px;
-           border:1px solid black;
-           cursor:pointer;
-		   font-family:Calibri;
-		   font-size:350%;
-		   border-radius:10px;
+	display:inline-block;
+	padding:3px;
+	border:1px solid black;
+	cursor:pointer;
+	font-family:Calibri;
+	font-size:350%;
+	border-radius:10px;
 }
 .onglet_0
 {
-           background:#000000;
-           border-bottom:1px solid black;
-		   color:white;
-		   opacity:0.5;
+	background:#000000;
+	border-bottom:1px solid black;
+	color:white;
+	opacity:0.5;
 }
 .onglet_1
 {
-           background:#dddddd;
-		   color:black;
-           border-bottom:0px solid black;
-           padding-bottom:4px;
-		   opacity:0.5;
+	background:#dddddd;
+	color:black;
+	border-bottom:0px solid black;
+	padding-bottom:4px;
+	opacity:0.5;
 }
 .contenu_onglet
 {
-           background-color:#c696bf;
-           border:1px solid black;
-           margin-top:-1px;
-           display:none;
-		   padding-top:3%;
+	background-color:#c696bf;
+	border:1px solid black;
+	margin-top:-1px;
+	display:none;
+	padding-top:3%;
 }
 .boutonSuppression{
 	height:30px;

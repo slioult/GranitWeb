@@ -54,7 +54,7 @@ function ajouteMateriau(value)
 		
 		table.appendChild(ligne);
 	}
-	else if(document.getElementById("nat" + document.getElementById('materiau').value.toString()))
+	else if(document.getElementById("mat" + document.getElementById('materiau').value.toString()))
 	{
 		alert("Ce métériau a déjà été ajouté.");
 	}
@@ -110,7 +110,7 @@ function ajoutePrestation(value)
 		
 		table.appendChild(ligne);
 	}
-	else if(document.getElementById("nat" + document.getElementById('prestation').value.toString()))
+	else if(document.getElementById("pre" + document.getElementById('prestation').value.toString()))
 	{
 		alert("Cette prestation a déjà été ajoutée.");
 	}
@@ -141,8 +141,11 @@ change_onglet(anc_onglet);
 
 <body>
 	<div id="page">
-		<div style="background:gray;" >
+		<div>
 			<a href="accueil.php"><input id="home_bouton" type="image" src="images/bouton_accueil.png" /></a>
+		</div>
+		<div>
+			<input id="save_bouton" type="image" src="images/save.png" />
 		</div>
 		<h1 id="centrer_titre">Saisie</h1>		
 	
@@ -320,6 +323,73 @@ change_onglet(anc_onglet);
 									<th style="width:auto;">Prestation</th>
 									<th style="width:auto;"/>
 								</table>
+							</div>
+							<div class="element">
+								<p class="labelElement">Achèvement :</p>
+								<select name="achevJour" class="valueElement">
+									<?php
+									for($i = 1; $i <= 31; $i++)
+									{
+										if($i == date("d"))
+										{
+											echo '<option value='.$i.' selected>'.$i.'</option><br/>';
+										}
+										else
+										{
+											echo '<option value='.$i.'>'.$i.'</option><br/>';
+										}
+									}
+									?>
+								</select>
+								<select name="achevMois" class="valueElement">
+									<?php
+									for($i = 1; $i <= 12; $i++)
+									{
+										if($i == date("m"))
+										{
+											echo '<option value='.$i.' selected>'.$i.'</option><br/>';
+										}
+										else
+										{
+											echo '<option value='.$i.'>'.$i.'</option><br/>';
+										}
+									}
+									?>
+								</select>
+								<select name="achevAnnee" class="valueElement">
+									<?php
+									for($i = 2010; $i <= date("Y") + 2; $i++)
+									{
+										if($i == date("Y"))
+										{
+											echo '<option value='.$i.' selected>'.$i.'</option><br/>';
+										}
+										else
+										{
+											echo '<option value='.$i.'>'.$i.'</option><br/>';
+										}
+									}
+									?>
+								</select>
+								<br/>
+								<select name="achevHeure" class="valueElement">
+									<?php
+									for($i = 0; $i <= 23; $i++)
+									{
+										echo '<option value='.$i.'>'.$i.'</option><br/>';
+									}
+									?>
+								</select>
+								<label class="labelElement">h</label>
+								<select name="achevMinute" class="valueElement">
+									<?php
+									for($i = 0; $i <= 59; $i++)
+									{
+										echo '<option value='.$i.'>'.$i.'</option><br/>';
+									}
+									?>
+								</select>
+								<label class="labelElement">m</label>
 							</div>
 						</div>
 					</div>
