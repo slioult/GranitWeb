@@ -51,14 +51,26 @@ function testing()
 <body>
 
 	<div id="page">
-		<div style="background:gray;" >
-			<a href="accueil.php"><input id="home_bouton" type="image" src="images/bouton_accueil.png" /></a>
-		</div>
-		<h1 id="centrer_titre">Saisie</h1>
-		<input onclick="testing()" type="button" Value="Coucou les n'enfants" />
-		<input id="testInput" type="text" />
-		<table id="maTable">
-		</table>
+		
+		
+		<p><?php
+		
+			/*for ($i = 1; $i <= $_POST['countNatures']; $i++)
+			{
+				echo $_POST['nat'.$i];
+			}
+			spl_autoload_register('chargerClasse');
+			
+			$cmd = new Commande();
+			
+			function chargerClasse($classe)
+			{
+				require 'classes/'.$classe.'.classe.php';
+			}*/
+			
+			echo $_POST['releve'];
+			
+			?></p>
 		
 
 	</div>

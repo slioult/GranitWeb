@@ -4,7 +4,7 @@
 try
 {
 	$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
-	$reponse = $bdd->query('SELECT Login, Password, IsAddCmd, IsUpdCmd FROM Session');
+	$reponse = $bdd->query('SELECT Login, Password, IsAddCmd, IsUpdCmd, IsDispCA FROM Session');
 	if (!empty($_POST['login']) AND !empty($_POST['password']))
 	{
 		$login = $_POST['login'];
@@ -21,6 +21,7 @@ try
 				$_SESSION['password'] = $password;
 				$_SESSION['IsAddCmd'] = $donnees['IsAddCmd'];
 				$_SESSION['IsUpdCmd'] = $donnees['IsUpdCmd'];
+				$_SESSION['IsDispCA'] = $donnees['IsDispCA'];
 				$_SESSION['quit'] = False;
 			}
 		}

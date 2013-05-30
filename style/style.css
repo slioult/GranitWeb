@@ -42,6 +42,7 @@ form{
 }
 input{
 	border-radius:10px;
+	vertical-align:middle;
 }
 th{
 	font-size:200%;
@@ -116,7 +117,7 @@ td, #afficheNbResult{
 #afficheNbResult{
 	margin:0;
 }
-#listMateriaux, #listNatures, #listPrestations{
+#listMateriaux, #listNatures, #listPrestations, #listRemarques, #listQualites{
 	font-size:50%;
 }
 
@@ -139,12 +140,19 @@ td, #afficheNbResult{
 }
 .labelElement{
 	font-size:200%;
+	font-family:Calibri;
+	vertical-align:middle;
 	margin:0;
 }
-.element{
+.element, .elementTable{
 	margin-left:2%;
 	margin-right:2%;
 	display:inline-block;
+	vertical-align:middle;
+}
+.elementTable{
+	margin-left:-1%;
+	margin-right:1%;
 }
 .valueElement{
 	font-size:100%;
@@ -193,4 +201,8 @@ td, #afficheNbResult{
 }
 .boutonSuppression{
 	height:30px;
+}
+.interligne{
+	margin-top:1%;
+	margin-bottom:1%;
 }
