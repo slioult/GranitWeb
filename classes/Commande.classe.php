@@ -1,6 +1,8 @@
+﻿
 <?php
 class Commande
 {
+
 // Attributs
 	private $_Identifier;
 	private $_NumeroCommande;
@@ -22,30 +24,32 @@ class Commande
 	private $_ANatures;
 	private $_APrestations;
 	private $_DatePrestations;
+	private $_Remarques;
+	private $_PbQualites;
 // Attributs
 	
 // Properties
 	function getIdentifier()
 	{
-		return $this->$_Identifier;
+		return $this->_Identifier;
 	}
 	function setIdentifier($identifier)
 	{
 		$this->_Identifier = $identifier;
 	}
 	
-	function getNumeroCommande()
+	public function getNumeroCommande()
 	{
-		return $this->$_NumeroCommande;
+		return $this->_NumeroCommande;
 	}
-	function setNumeroCommande($numeroCommande)
+	public function setNumeroCommande($numeroCommande)
 	{
 		$this->_NumeroCommande = $numeroCommande;
 	}
 	
 	function getMontant()
 	{
-		return $this->$_Montant;
+		return $this->_Montant;
 	}
 	function setMontant($montant)
 	{
@@ -54,7 +58,7 @@ class Commande
 	
 	function getArrhes()
 	{
-		return $this->$_Arrhes;
+		return $this->_Arrhes;
 	}
 	function setArrhes($arrhes)
 	{
@@ -63,7 +67,7 @@ class Commande
 	
 	function getDateCommande()
 	{
-		return $this->$_DateCommande;
+		return $this->_DateCommande;
 	}
 	function setDateCommande($dateCommande)
 	{
@@ -72,7 +76,7 @@ class Commande
 	
 	function getAdresseChantier()
 	{
-		return $this->$_AdresseChantier;
+		return $this->_AdresseChantier;
 	}
 	function setAdresseChantier($adresseChantier)
 	{
@@ -81,7 +85,7 @@ class Commande
 	
 	function getTpsDebit()
 	{
-		return $this->$_TpsDebit;
+		return $this->_TpsDebit;
 	}
 	function setTpsDebit($tpsDebit)
 	{
@@ -90,7 +94,7 @@ class Commande
 	
 	function getTpsCmdNumerique()
 	{
-		return $this->$_TpsCmdNumerique;
+		return $this->_TpsCmdNumerique;
 	}
 	function setTpsCmdNumerique($tpsCmdNumerique)
 	{
@@ -99,7 +103,7 @@ class Commande
 	
 	function getTpsFinition()
 	{
-		return $this->$_TpsFinition;
+		return $this->_TpsFinition;
 	}
 	function setTpsFinition($tpsFinition)
 	{
@@ -108,7 +112,7 @@ class Commande
 	
 	function getTpsAutres()
 	{
-		return $this->$_TpsAutres;
+		return $this->_TpsAutres;
 	}
 	function setTpsAutres($tpsAutres)
 	{
@@ -117,7 +121,7 @@ class Commande
 	
 	function getDelaiPrevu()
 	{
-		return $this->$_DelaiPrevu;
+		return $this->_DelaiPrevu;
 	}
 	function setDelaiPrevu($delaiPrevu)
 	{
@@ -126,7 +130,7 @@ class Commande
 	
 	function getEtat()
 	{
-		return $this->$_Etat;
+		return $this->_Etat;
 	}
 	function setEtat($etat)
 	{
@@ -135,7 +139,7 @@ class Commande
 	
 	function getClient()
 	{
-		return $this->$_Client;
+		return $this->_Client;
 	}
 	function setClient($client)
 	{
@@ -144,7 +148,7 @@ class Commande
 	
 	function getContremarque()
 	{
-		return $this->$_Contremarque;
+		return $this->_Contremarque;
 	}
 	function setContremarque($contremarque)
 	{
@@ -153,7 +157,7 @@ class Commande
 	
 	function getMesure()
 	{
-		return $this->$_Mesure;
+		return $this->_Mesure;
 	}
 	function setMesure($mesure)
 	{
@@ -162,7 +166,7 @@ class Commande
 	
 	function getDateMesure()
 	{
-		return $this->$_DateMesure;
+		return $this->_DateMesure;
 	}
 	function setDateMesure($dateMesure)
 	{
@@ -171,7 +175,7 @@ class Commande
 	
 	function getAMateriaux()
 	{
-		return $this->$_AMateriaux;
+		return $this->_AMateriaux;
 	}
 	function setAMateriaux($aMateriaux)
 	{
@@ -180,7 +184,7 @@ class Commande
 	
 	function getANatures()
 	{
-		return $this->$_ANatures;
+		return $this->_ANatures;
 	}
 	function setANatures($aNatures)
 	{
@@ -189,7 +193,7 @@ class Commande
 	
 	function getAPrestations()
 	{
-		return $this->$_APrestations;
+		return $this->_APrestations;
 	}
 	function setAPrestations($aPrestations)
 	{
@@ -198,19 +202,38 @@ class Commande
 	
 	function getDatePrestations()
 	{
-		return $this->$_DatePrestations;
+		return $this->_DatePrestations;
 	}
 	function setDatePrestations($datePrestations)
 	{
 		$this->_DatePrestations = $datePrestations;
+	}
+	
+	function getRemarques()
+	{
+		return $this->_Remarques;
+	}
+	function setRemarques($remarques)
+	{
+		$this->_Remarques = $remarques;
+	}
+	
+	function getPbQualites()
+	{
+		return $this->_PbQualites;
+	}
+	function setPbQualites($pbQualites)
+	{
+		$this->_PbQualites = $pbQualites;
 	}
 // Properties
 
 // Constructor
 	function __construct($identifier = 0, $numCmd = 0, $montant = 0, $arrhes = 0, $dateCommande = null, $adresseChantier = '', $tpsDebit = 0, $tpsCmdNumerique = 0, $tpsFinition = 0, $tpsAutres = 0,
 						 $delaiPrevu = null, $etat = null, $client = null, $contremarque = null, $mesure = null, $dateMesure = null, $aMateriaux = null, $aNatures = null, $aPrestations = null,
-						 $datePrestations = null)
+						 $datePrestations = null, $remarques = null, $pbQualites = null)
 	{
+	
 		$this->setIdentifier($identifier);
 		$this->setNumeroCommande($numCmd);
 		$this->setMontant($montant);
@@ -231,7 +254,57 @@ class Commande
 		$this->setANatures(aNatures);
 		$this->setAPrestations($aPrestations);
 		$this->setDatePrestations($datePrestations);
+		$this->setRemarques($remarques);
+		$this->setPbQualites($pbQualites);
 	}
 // Constructor
+
+// Méthodes
+	function isExisteCommande()
+	{
+		$isExists = false;
+		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
+		$reponse = $bdd->prepare('SELECT count(NumCmd) as count FROM Commande Where NumCmd=?');
+		$reponse->execute(array($this->getNumeroCommande()));
+		
+		while($donnees = $reponse->fetch())
+		{
+			if($donnees['count'] > 0)
+			{
+				$isExists = true;
+			}
+		}
+		
+		$reponse->closeCursor();
+		
+		return $isExists;
+	}
+
+	function ajouteCommande()
+	{
+		if(!$this->isExisteCommande())
+		{
+			//Récupère l'id du client s'il existe déjà
+			$this->getClient()->getId();
+			
+			//Crée le client et récupère son id s'il n'existe pas
+			if($this->getClient()->getIdentifier() == 0)
+			{
+				$this->getClient()->insert();
+				$this->getClient()->getId();
+			}
+			
+			//Récupère l'id de la contremarque si elle existe déjà
+			$this->getContremarque()->getId();
+			
+			//Crée la contremarque et récupère son id si elle n'existe pas
+			if($this->getContremarque()->getIdentifier() == 0)
+			{
+				$this->getContremarque()->insert();
+				$this->getContremarque()->getId();
+			}
+		}
+	}
+// Méthodes
 }
 ?>

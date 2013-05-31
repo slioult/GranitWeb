@@ -27,10 +27,10 @@ class Qualite
 // Properties
 
 // Constructor
-	function __construct(, $identifier = 0, $type = '')
+	function __construct($identifier = 0, $type = '')
 	{
-		$this->_Identifier = setIdentifier($identifier);
-		$this->_Type = setType($type);
+		$this->setIdentifier($identifier);
+		$this->setType($type);
 	}
 // Constructor
 }

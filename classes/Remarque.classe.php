@@ -40,7 +40,7 @@ class Remarque
 	{
 		return $this->_Commentaire;
 	}
-	function setCommentaire($commentaire);
+	function setCommentaire($commentaire)
 	{
 		$this->_Commentaire = $commentaire;
 	}
@@ -55,5 +55,35 @@ class Remarque
 		$this->setCommentaire($commentaire);
 	}
 // Constructor
+
+// Méthodes
+	function isRemarqueExiste()
+	{
+		$isExists = false;
+		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
+		$reponse = $bdd->prepare('SELECT count(Identifier) as count FROM Remarque WHERE Identifier=?');
+		$reponse->execute(array($this->getIdentifier()));
+		
+		while($donnees = $reponse->fetch())
+		{
+			if($donnees['count'] > 0)
+			{
+				$isExists = true;
+			}
+		}
+		
+		$reponse->closeCursor();
+		
+		return $isExists;
+	}
+	
+	function insert($idCommande)
+	{
+		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
+		$reponse = $bdd->prepare('INSERT INTO Remarque (Commentaire, Source, Date, IdentifierCommande) VALUES (?, ?, ?, ?)');
+		$reponse->execute(array($this->getCommentaire(), $this->getSource(), $this->getDateHeure(), $idCommande));
+		$reponse->closeCursor();
+	}
+// Méthodes
 }
 ?>

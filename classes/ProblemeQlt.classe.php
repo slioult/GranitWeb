@@ -50,7 +50,7 @@ class ProblemeQlt
 	{
 		return $this->_Commentaire;
 	}
-	function setCommentaire($commentaire);
+	function setCommentaire($commentaire)
 	{
 		$this->_Commentaire = $commentaire;
 	}
@@ -66,5 +66,16 @@ class ProblemeQlt
 		$this->setCommentaire($commentaire);
 	}
 // Constructor
+
+// Méthodes
+	function insert($idCommande)
+	{
+		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
+		$reponse = $bdd->prepare('INSERT INTO Commande_Qualite (Identifier_Commande, Identifier_Qualite, Source, DateProbleme, Remarque) VALUES (?,?,?,?,?)');
+		$q = $this->getQualite();
+		$reponse->execute(array($idCommande, $q->getIdentifier(), $this->getSource(), $this->getDateHeure(), $this->getCommentaire()));
+		$reponse->closeCursor();
+	}
+// Méthodes
 }
 ?>

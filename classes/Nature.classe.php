@@ -27,10 +27,10 @@ class Nature
 // Properties
 
 // Constructor
-	function __construct(, $identifier = 0, $label = '')
+	function __construct($identifier = 0, $label = '')
 	{
-		$this->_Identifier = setIdentifier($identifier);
-		$this->_Label = setLabel($label);
+		$this->setIdentifier($identifier);
+		$this->setLabel($label);
 	}
 // Constructor
 }

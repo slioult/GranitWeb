@@ -26,6 +26,8 @@ else
 ?>
 <title>Mayenne Granits</title>
 <script type="text/javascript">
+// Permet d'ajouter un matériau dans le tableau prévue à cette effet
+// value : index du matériau sélectionné
 function ajouteMateriau(value)
 {
 	if(!document.getElementById("mat" + document.getElementById('materiau').value.toString()) && document.getElementById('materiau').value != 0)
@@ -69,6 +71,8 @@ function ajouteMateriau(value)
 	}
 }
 
+// Permet d'ajouter une nature dans le tableau prévu à cet effet
+// value : index de la nature sélectionnée
 function ajouteNature(value)
 {
 	if(!document.getElementById("nat" + document.getElementById('nature').value.toString()) && document.getElementById('nature').value != 0)
@@ -106,6 +110,8 @@ function ajouteNature(value)
 	}
 }
 
+// Permet d'ajouter une prestation dans le tableau prévu à cet effet
+// value : index de la prestation sélectionnée
 function ajoutePrestation(value)
 {
 	if(!document.getElementById("pre" + document.getElementById('prestation').value.toString()) && document.getElementById('prestation').value != 0)
@@ -143,6 +149,9 @@ function ajoutePrestation(value)
 	}
 }
 
+// Permet d'ajouter une remarque dans le tableau prévu à cet effet
+// remarque : texte à ajouter comme remarque
+// session : nom de session ayant ajouté la remarque
 function ajouteRemarque(remarque, session)
 {
 	var table = document.getElementById('listRemarques');
@@ -178,6 +187,10 @@ function ajouteRemarque(remarque, session)
 	table.appendChild(ligne);
 }
 
+// Permet d'ajouter un problème de qualité dans le tableau prévu à cet effet
+// commentaire : commentaire relatif au problème de qualité
+// session : session ayant signalé le problème de qualité
+// value : index du problème de qualité sélectionné
 function ajouteQualite(commentaire, session, value)
 {
 	var table = document.getElementById('listQualites');
@@ -218,6 +231,7 @@ function ajouteQualite(commentaire, session, value)
 	table.appendChild(ligne);
 }
 
+// Permet de récupérer la date et l'heure actuelles dans un format standard (compris par une base de données)
 function getDateHeure()
 {
 	var today = new Date();
@@ -236,6 +250,8 @@ function getDateHeure()
 	return date;
 }
 
+// Supprime une ligne d'un tableau
+// table : tableau HTML dans lequel supprimer la ligne
 function supprimeLigne(table, btn, type)
 {
 	var ligne = btn.parentNode;
@@ -247,6 +263,8 @@ function supprimeLigne(table, btn, type)
 	document.getElementsByName('count' + type)[0].value = count;
 }
 
+// Permet de changer la sélectione de l'onglet
+// name : nom du nouvel onglet à sélectionner
 function change_onglet(name)
 {
     document.getElementById('onglet_'+anc_onglet).className = 'onglet_0 onglet';
@@ -256,10 +274,63 @@ function change_onglet(name)
     anc_onglet = name;
 }
 
+// Envoi le formulaire
 function envoi()
 {
+	var error = '';
+	if(document.getElementsByName('numCommande')[0].value != '')
+	{
+		if(document.getElementsByName('client')[0].value != '')
+		{
+			if(document.getElementsByName('delaiJour')[0].value != 0 && document.getElementsByName('delaiMois')[0].value != 0 && document.getElementsByName('delaiAnnee')[0].value != 0)
+			{
+				if(document.getElementsByName('achevJour')[0].value != 0 && document.getElementsByName('achevMois')[0].value != 0 && document.getElementsByName('achevAnnee')[0].value != 0)
+				{
+					if(document.getElementsByName('releve')[0].value != 0)
+					{
+						if(document.getElementsByName('releveJour')[0].value != 0 && document.getElementsByName('releveMois')[0].value != 0 && document.getElementsByName('releveAnnee')[0].value != 0)
+						{
+							return true;
+						}
+						else
+						{
+							error = 'Veuillez saisir la date de relevé';
+						}
+					}
+					else
+					{
+						error = 'Veuillez choisir le type de relevé';
+					}
+				}
+				else
+				{
+					document.getElementsByName('achevJour')[0].selectedIndex = document.getElementsByName('delaiJour')[0].selectedIndex;
+					document.getElementsByName('achevMois')[0].selectedIndex = document.getElementsByName('delaiMois')[0].selectedIndex;
+					document.getElementsByName('achevAnnee')[0].selectedIndex = document.getElementsByName('delaiAnnee')[0].selectedIndex;
+					
+					error = 'La date d\'achèvement a été modifiée automatiquement, veuillez la vérifier';
+				}
+			}
+			else
+			{
+				error = 'Veuillez saisir un délai valide';
+			}
+		}
+		else
+		{
+			error = 'Veuillez saisir un nom de client';
+		}
+	}
+	else
+	{
+		error = 'Veuillez saisir un numéro de commande';
+	}
 	
-	submit();
+	if(error != '')
+	{
+		alert(error);
+		//return false;
+	}
 }
 
 var session;
@@ -284,9 +355,12 @@ function init()
 			<a href="accueil.php"><input id="home_bouton" type="image" src="images/bouton_accueil.png" /></a>
 		</div>
 		
-		<form method="post" action="test.php">
+		<form method="post" action="interface_sauvegarde.php" onSubmit="return envoi()">
+			<?php
+			echo '<input type="hidden" name="idCommande" value="'.$_POST['idCommande'].'"/>';
+			?>
 			<div>
-				<input id="save_bouton" type="image" onclick="envoi()" src="images/save.png" />
+				<input id="save_bouton" type="image" src="images/save.png" />
 			</div>
 			<h1 id="centrer_titre">Saisie</h1>
 			<div class="systeme_onglets">
@@ -305,6 +379,7 @@ function init()
 									<?php
 									for($i = 1; $i <= 31; $i++)
 									{
+										if($i < 10){$i = '0'.$i;}
 										if($i == date("d"))
 										{
 											echo '<option value='.$i.' selected>'.$i.'</option><br/>';
@@ -320,6 +395,7 @@ function init()
 									<?php
 									for($i = 1; $i <= 12; $i++)
 									{
+										if($i < 10){$i = '0'.$i;}
 										if($i == date("m"))
 										{
 											echo '<option value='.$i.' selected>'.$i.'</option><br/>';
@@ -402,6 +478,7 @@ function init()
 									echo '<option value=0 selected></option><br/>';
 									for($i = 1; $i <= 31; $i++)
 									{
+										if($i < 10){$i = '0'.$i;}
 										echo '<option value='.$i.'>'.$i.'</option><br/>';
 									}
 									?>
@@ -411,6 +488,7 @@ function init()
 									echo '<option value=0 selected></option><br/>';
 									for($i = 1; $i <= 12; $i++)
 									{
+										if($i < 10){$i = '0'.$i;}
 										echo '<option value='.$i.'>'.$i.'</option><br/>';
 									}
 									?>
@@ -469,6 +547,7 @@ function init()
 									echo '<option value=0 selected></option><br/>';
 									for($i = 1; $i <= 31; $i++)
 									{
+										if($i < 10){$i = '0'.$i;}
 										echo '<option value='.$i.'>'.$i.'</option><br/>';
 									}
 									?>
@@ -478,6 +557,7 @@ function init()
 									echo '<option value=0 selected></option><br/>';
 									for($i = 1; $i <= 12; $i++)
 									{
+										if($i < 10){$i = '0'.$i;}
 										echo '<option value='.$i.'>'.$i.'</option><br/>';
 									}
 									?>
@@ -496,6 +576,7 @@ function init()
 									<?php
 									for($i = 0; $i <= 23; $i++)
 									{
+										if($i < 10){$i = '0'.$i;}
 										echo '<option value='.$i.'>'.$i.'</option><br/>';
 									}
 									?>
@@ -505,6 +586,7 @@ function init()
 									<?php
 									for($i = 0; $i <= 59; $i++)
 									{
+										if($i < 10){$i = '0'.$i;}
 										echo '<option value='.$i.'>'.$i.'</option><br/>';
 									}
 									?>
@@ -516,7 +598,7 @@ function init()
 						<div class="ligne">
 							<div class="element">
 								<p class="labelElement">Relevé :</p>
-								<select id="releve" class="valueElement">
+								<select id="releve" name="releve" class="valueElement">
 									<?php
 									echo '<option value=\'0\' selected>Choisir</option><br/>';
 									
@@ -549,6 +631,7 @@ function init()
 									echo '<option value=0 selected></option><br/>';
 									for($i = 1; $i <= 31; $i++)
 									{
+										if($i < 10){$i = '0'.$i;}
 										echo '<option value='.$i.'>'.$i.'</option><br/>';
 									}
 									?>
@@ -558,6 +641,7 @@ function init()
 									echo '<option value=0 selected></option><br/>';
 									for($i = 1; $i <= 12; $i++)
 									{
+										if($i < 10){$i = '0'.$i;}
 										echo '<option value='.$i.'>'.$i.'</option><br/>';
 									}
 									?>
@@ -576,6 +660,7 @@ function init()
 									<?php
 									for($i = 0; $i <= 23; $i++)
 									{
+										if($i < 10){$i = '0'.$i;}
 										echo '<option value='.$i.'>'.$i.'</option><br/>';
 									}
 									?>
@@ -585,6 +670,7 @@ function init()
 									<?php
 									for($i = 0; $i <= 59; $i++)
 									{
+										if($i < 10){$i = '0'.$i;}
 										echo '<option value='.$i.'>'.$i.'</option><br/>';
 									}
 									?>
@@ -680,13 +766,20 @@ function init()
 							</div>
 						</div>
 						<?php
-						echo '<hr class="interligne" />
-								<div class="ligne">
-									<div class="element">
-										<p class="labelElement">Montant HT :</p>
-										<input class="valueElement" type="text" name="montant" />
-									</div>
-								</div>';
+						if($_SESSION['IsDispCA'] == 1)
+						{
+							echo '<hr class="interligne" />
+									<div class="ligne">
+										<div class="element">
+											<p class="labelElement">Montant HT en € :</p>
+											<input class="valueElement" type="text" name="montant" />
+										</div>
+										<div class="element">
+											<p class="labelElement">Arrhes en € :</p>
+											<input class="valueElement" type="text" name="arrhes" />
+										</div>
+									</div>';
+						}
 						?>
 						<hr class="interligne" />
 						<div class="ligne">
