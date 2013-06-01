@@ -24,8 +24,8 @@ class Commande
 	private $_ANatures;
 	private $_APrestations;
 	private $_DatePrestations;
-	private $_Remarques;
-	private $_PbQualites;
+	private $_ARemarques;
+	private $_APbQualites;
 // Attributs
 	
 // Properties
@@ -209,22 +209,22 @@ class Commande
 		$this->_DatePrestations = $datePrestations;
 	}
 	
-	function getRemarques()
+	function getARemarques()
 	{
-		return $this->_Remarques;
+		return $this->_ARemarques;
 	}
-	function setRemarques($remarques)
+	function setARemarques($remarques)
 	{
-		$this->_Remarques = $remarques;
+		$this->_ARemarques = $remarques;
 	}
 	
-	function getPbQualites()
+	function getAPbQualites()
 	{
-		return $this->_PbQualites;
+		return $this->_APbQualites;
 	}
-	function setPbQualites($pbQualites)
+	function setAPbQualites($pbQualites)
 	{
-		$this->_PbQualites = $pbQualites;
+		$this->_APbQualites = $pbQualites;
 	}
 // Properties
 
@@ -251,15 +251,16 @@ class Commande
 		$this->setMesure($mesure);
 		$this->setDateMesure($dateMesure);
 		$this->setAMateriaux($aMateriaux);
-		$this->setANatures(aNatures);
+		$this->setANatures($aNatures);
 		$this->setAPrestations($aPrestations);
 		$this->setDatePrestations($datePrestations);
-		$this->setRemarques($remarques);
-		$this->setPbQualites($pbQualites);
+		$this->setARemarques($remarques);
+		$this->setAPbQualites($pbQualites);
 	}
 // Constructor
 
 // Méthodes
+	//Retourne un booléen indiquant si la commande existe
 	function isExisteCommande()
 	{
 		$isExists = false;
@@ -280,7 +281,8 @@ class Commande
 		return $isExists;
 	}
 
-	function ajouteCommande()
+	//Ajoute une commande et ses éléments dans la BDD
+	function ajoute()
 	{
 		if(!$this->isExisteCommande())
 		{
@@ -303,6 +305,77 @@ class Commande
 				$this->getContremarque()->insert();
 				$this->getContremarque()->getId();
 			}
+			
+			//Insert la commande en base de données et récupère son identifier
+			$this->insert();
+			
+			//Insert les prestations dans la BDD
+			foreach($this->getAPrestations() as $prest)
+			{
+				$prest->insertLien($this->getIdentifier());
+			}
+			
+			//Insert les matériaux dans la BDD
+			foreach($this->getAMateriaux() as $mat)
+			{
+				$mat->insertLien($this->getIdentifier());
+			}
+			
+			//Insert les natures dans la BDD
+			foreach($this->getANatures() as $nat)
+			{
+				$nat->insertLien($this->getIdentifier());
+			}
+			
+			//Insert les problèmes de qualité dans la BDD
+			foreach($this->getAPbQualites() as $pb)
+			{
+				$pb->insert($this->getIdentifier());
+			}
+			
+			//Insert les remarques dans la BDD
+			foreach($this->getARemarques() as $rem)
+			{
+				$rem->insert($this->getIdentifier());
+			}
+		}
+	}
+	
+	//Insert une commande dans la BDD
+	function insert()
+	{
+		try
+		{
+			if($this->getMontant() == ''){$this->setMontant(0);}
+			if($this->getArrhes() == ''){$this->setArrhes(0);}
+			$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
+			$bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+			
+			$reponse = $bdd->prepare('INSERT INTO Commande '.
+												'(NumCmd, Montant, Arrhes, DateCommande, AdresseChantier, TpsDebit, TpsCmdNumerique, TpsFinition, TpsAutres, DelaiPrevu, '.
+												'IdentifierEtat, IdentifierClient, IdentifierContremarque, IdentifierMesure, DateMesure, DateFinalisations) '.
+									 'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+			
+			$reponse->execute(array($this->getNumeroCommande(), str_replace(",", ".", $this->getMontant()), str_replace(",", ".", $this->getArrhes()), $this->getDateCommande()->FTBDD(), $this->getAdresseChantier(), $this->getTpsDebit(),
+									$this->getTpsCmdNumerique(), $this->getTpsFinition(), $this->getTpsAutres(), $this->getDelaiPrevu()->FTBDD(), $this->getEtat()->getIdentifier(),
+									$this->getClient()->getIdentifier(), $this->getContremarque()->getIdentifier(), $this->getMesure()->getIdentifier(), $this->getDateMesure()->FTBDD(),
+									$this->getDatePrestations()->FTBDD()));
+						
+			$reponse->closeCursor();
+			
+			$reponse = $bdd->prepare('SELECT Identifier FROM Commande WHERE NumCmd=?');
+			$reponse->execute(array($this->getNumeroCommande()));
+			
+			while($donnees = $reponse->fetch())
+			{
+				$this->setIdentifier($donnees['Identifier']);
+			}
+			
+			$reponse->closeCursor();
+		}
+		catch(PDOException $e)
+		{
+			exit($e->getMessage());
 		}
 	}
 // Méthodes

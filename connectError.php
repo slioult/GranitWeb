@@ -27,11 +27,11 @@ else
 
 <body>
 
-<div id="page" >
+	<div id="page" >
 		<h1 id="centrer_titre">Mayenne <br /> Granits</h1>
 		<br /> <br /> <br /><br /> <br /> <br />
 		<h2 style="margin-bottom:20%;">Identifiant ou mot de passe incorrect. <br /> <br /> Vous allez être redirigé automatiquement.</h2>
-</div>
+	</div>
 
 </body>
 </html>

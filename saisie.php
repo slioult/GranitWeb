@@ -5,6 +5,10 @@ if(empty($_SESSION['login']))
 {
 	header('location:index.php');
 }
+elseif(!$_SESSION['IsAddCmd'])
+{
+	header('location:accueil.php');
+}
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -282,38 +286,45 @@ function envoi()
 	{
 		if(document.getElementsByName('client')[0].value != '')
 		{
-			if(document.getElementsByName('delaiJour')[0].value != 0 && document.getElementsByName('delaiMois')[0].value != 0 && document.getElementsByName('delaiAnnee')[0].value != 0)
+			if(document.getElementsByName('contremarque')[0].value != '')
 			{
-				if(document.getElementsByName('achevJour')[0].value != 0 && document.getElementsByName('achevMois')[0].value != 0 && document.getElementsByName('achevAnnee')[0].value != 0)
+				if(document.getElementsByName('delaiJour')[0].value != 0 && document.getElementsByName('delaiMois')[0].value != 0 && document.getElementsByName('delaiAnnee')[0].value != 0)
 				{
-					if(document.getElementsByName('releve')[0].value != 0)
+					if(document.getElementsByName('achevJour')[0].value != 0 && document.getElementsByName('achevMois')[0].value != 0 && document.getElementsByName('achevAnnee')[0].value != 0)
 					{
-						if(document.getElementsByName('releveJour')[0].value != 0 && document.getElementsByName('releveMois')[0].value != 0 && document.getElementsByName('releveAnnee')[0].value != 0)
+						if(document.getElementsByName('releve')[0].value != 0)
 						{
-							return true;
+							if(document.getElementsByName('releveJour')[0].value != 0 && document.getElementsByName('releveMois')[0].value != 0 && document.getElementsByName('releveAnnee')[0].value != 0)
+							{
+								return true;
+							}
+							else
+							{
+								error = 'Veuillez saisir la date de relevé';
+							}
 						}
 						else
 						{
-							error = 'Veuillez saisir la date de relevé';
+							error = 'Veuillez choisir le type de relevé';
 						}
 					}
 					else
 					{
-						error = 'Veuillez choisir le type de relevé';
+						document.getElementsByName('achevJour')[0].selectedIndex = document.getElementsByName('delaiJour')[0].selectedIndex;
+						document.getElementsByName('achevMois')[0].selectedIndex = document.getElementsByName('delaiMois')[0].selectedIndex;
+						document.getElementsByName('achevAnnee')[0].selectedIndex = document.getElementsByName('delaiAnnee')[0].selectedIndex;
+						
+						error = 'La date d\'achèvement a été modifiée automatiquement, veuillez la vérifier';
 					}
 				}
 				else
 				{
-					document.getElementsByName('achevJour')[0].selectedIndex = document.getElementsByName('delaiJour')[0].selectedIndex;
-					document.getElementsByName('achevMois')[0].selectedIndex = document.getElementsByName('delaiMois')[0].selectedIndex;
-					document.getElementsByName('achevAnnee')[0].selectedIndex = document.getElementsByName('delaiAnnee')[0].selectedIndex;
-					
-					error = 'La date d\'achèvement a été modifiée automatiquement, veuillez la vérifier';
+					error = 'Veuillez saisir un délai valide';
 				}
 			}
 			else
 			{
-				error = 'Veuillez saisir un délai valide';
+				error = 'Veuillez saisir un nom de contremarque';
 			}
 		}
 		else
@@ -329,7 +340,7 @@ function envoi()
 	if(error != '')
 	{
 		alert(error);
-		//return false;
+		return false;
 	}
 }
 
@@ -352,7 +363,7 @@ function init()
 <body>
 	<div id="page">
 		<div>
-			<a href="accueil.php"><input id="home_bouton" type="image" src="images/bouton_accueil.png" /></a>
+			<a href="accueil.php"><input id="home_bouton" type="image" src="images/bouton_accueil.png" onclick="window.location='accueil.php'" /></a>
 		</div>
 		
 		<form method="post" action="interface_sauvegarde.php" onSubmit="return envoi()">

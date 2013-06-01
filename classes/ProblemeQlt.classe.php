@@ -70,10 +70,11 @@ class ProblemeQlt
 // Méthodes
 	function insert($idCommande)
 	{
+		$dt = new MyTime();
+		$dt->SDate($this->getDateHeure());
 		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
 		$reponse = $bdd->prepare('INSERT INTO Commande_Qualite (Identifier_Commande, Identifier_Qualite, Source, DateProbleme, Remarque) VALUES (?,?,?,?,?)');
-		$q = $this->getQualite();
-		$reponse->execute(array($idCommande, $q->getIdentifier(), $this->getSource(), $this->getDateHeure(), $this->getCommentaire()));
+		$reponse->execute(array($idCommande, $this->getQualite()->getIdentifier(), $this->getSource(), $dt->FTBDD(), $this->getCommentaire()));
 		$reponse->closeCursor();
 	}
 // Méthodes

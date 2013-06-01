@@ -11,7 +11,7 @@ if(empty($_SESSION['login']))
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Refresh" content="3;URL=accueil.php" />
 <?php
 include 'style/Mobile_Detect.php';
 $detect = new Mobile_Detect();
@@ -43,23 +43,23 @@ else
 		spl_autoload_register('chargerClasse');
 		?>
 		
-		<?php	
+		<?php		
 		$id = $_POST['idCommande'];
-		$dateCommande = $_POST['commandeJour'].'-'.$_POST['commandeMois'].'-'.$_POST['commandeAnnee'];
+		$dateCommande = new MyTime($_POST['commandeJour'], $_POST['commandeMois'], $_POST['commandeAnnee']);
 		$numCmd = $_POST['numCommande'];
 		$etat = new Etat(intval($_POST['etat'], 10));
 		$client = new Client(0, strtoupper($_POST['client']));
-		$contremarque = new Contremarque(0, $_POST['contremarque']);
-		$delai = $_POST['delaiJour'].'-'.$_POST['delaiMois'].'-'.$_POST['delaiAnnee'];
+		$contremarque = new Contremarque(0, strtoupper($_POST['contremarque']));
+		$delai = new MyTime($_POST['delaiJour'], $_POST['delaiMois'], $_POST['delaiAnnee']);
 		$prestations = array();
 		for($i = 1; $i <= $_POST['countPrestations']; $i++)
 		{
 			$prest = new Prestation($_POST['pre'.$i]);
 			array_push($prestations, $prest);
 		}
-		$datePrestations = $_POST['achevJour'].'-'.$_POST['achevMois'].'-'.$_POST['achevAnnee'].' '.$_POST['achevHeure'].':'.$_POST['achevMinute'].':00';
+		$datePrestations = new MyTime($_POST['achevJour'], $_POST['achevMois'], $_POST['achevAnnee'], $_POST['achevHeure'], $_POST['achevMinute'], 00);
 		$releve = new Mesure($_POST['releve']);
-		$dateReleve = $_POST['releveJour'].'-'.$_POST['releveMois'].'-'.$_POST['releveAnnee'].' '.$_POST['releveHeure'].':'.$_POST['releveMinute'].':00';
+		$dateReleve = new MyTime($_POST['releveJour'], $_POST['releveMois'], $_POST['releveAnnee'], $_POST['releveHeure'], $_POST['releveMinute'], 00);
 		$tpsDebit = $_POST['debitHeure'] * 60 + $_POST['debitMinute'];
 		$tpsCmdNumerique = $_POST['cmdNumeriqueHeure'] * 60 + $_POST['cmdNumeriqueMinute'];
 		$tpsFinition = $_POST['finitionHeure'] * 60 + $_POST['finitionMinute'];
@@ -121,13 +121,12 @@ else
 								 $datePrestations,
 								 $remarques,
 								 $pbQualites);
-								 
-		$commande->ajouteCommande();
-		print_r('c est ok');
+		$commande->ajoute();
+		echo '<h1 id="centrer_titre">Mayenne <br /> Granits</h1>
+		<br /> <br /> <br /><br /> <br /> <br />
+		<h2 style="margin-bottom:20%;">La commande n°'.$commande->getNumeroCommande().' a été ajoutée avec succès. <br /> <br /> Vous allez être redirigé automatiquement.</h2>';
 		?>
 	</div>
-
-	<?php include("pied_de_page.php"); ?>
 
 </body>
 </html>

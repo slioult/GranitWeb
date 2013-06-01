@@ -44,5 +44,15 @@ class Materiau
 		$this->setEpaisseur($epaisseur);
 	}
 // Constructor
+
+// Méthodes
+	function insertLien($idCommande)
+	{
+		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
+		$reponse = $bdd->prepare('INSERT INTO Commande_Materiau (Identifier_Commande, Identifier_Materiau, Epaisseur) VALUES (?, ?, ?)');
+		$reponse->execute(array($idCommande, $this->getIdentifier(), $this->getEpaisseur()));
+		$reponse->closeCursor();
+	}
+// Méthodes
 }
 ?>

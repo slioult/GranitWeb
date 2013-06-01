@@ -33,5 +33,15 @@ class Nature
 		$this->setLabel($label);
 	}
 // Constructor
+
+// Méthodes
+	function insertLien($idCommande)
+	{
+		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
+		$reponse = $bdd->prepare('INSERT INTO Commande_Nature (Identifier_Commande, Identifier_Nature) VALUES (?, ?)');
+		$reponse->execute(array($idCommande, $this->getIdentifier()));
+		$reponse->closeCursor();
+	}
+// Méthodes
 }
 ?>

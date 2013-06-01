@@ -86,7 +86,12 @@ else
 		<div id="menu">
 			<div id="smenu">
 				<input class="bouton" type="button" value="Rechercher une commande" onclick="self.location.href='recherche.php'" style="min-width:80%;margin-bottom:10%;" > 
-				<input class="bouton" type="button" value="Saisir une commande" onclick="self.location.href='saisie.php'" style="min-width:80%;" > 
+				<?php
+				if($_SESSION['IsAddCmd'])
+				{
+					echo '<input class="bouton" type="button" value="Saisir une commande" onclick="self.location.href=\'saisie.php\'" style="min-width:80%;" >';
+				}
+				?>
 			</div>
 		</div>
 	</div>
