@@ -122,6 +122,7 @@ else
 											Order By c.DelaiPrevu');
 				}
 				
+				echo '<form method="post" action="saisie.php">';
 				
 				echo '<p id="afficheNbResult">Nombre de résultats : '.$reponse->rowCount().'</p>';
 				
@@ -129,21 +130,26 @@ else
 							<th>n°</th>
 							<th>Client<br/>Contremarque</th>
 							<th>État</th>
-							<th>Délai</th>';
+							<th>Délai</th>
+							<th></th>';
 							
 				while($donnees = $reponse->fetch())
 				{
 					echo '<tr>
+							<input type="hidden" value='.$donnees['NumCmd'].' name="UpdNumeroCommande" />
 							<td>'.$donnees['NumCmd'].'</td>
 							<td>'.$donnees['cli'].'<br/>'.$donnees['cmq'].'</td>
 							<td>'.$donnees['Label'].'</td>
 							<td>'.date("d/m/Y", strtotime($donnees['DelaiPrevu'])).'</td>
+							<td><input class="boutonOeil" type="image" src="images/oeil.png"/></td>
 						  </tr>';
 				}
 				
 				$reponse->closeCursor();
 				
 				echo	'</table>';
+				
+				echo '</form>';
 			}
 			elseif($_POST['etat'] == "1")
 			{

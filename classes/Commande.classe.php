@@ -230,8 +230,8 @@ class Commande
 
 // Constructor
 	function __construct($identifier = 0, $numCmd = 0, $montant = 0, $arrhes = 0, $dateCommande = null, $adresseChantier = '', $tpsDebit = 0, $tpsCmdNumerique = 0, $tpsFinition = 0, $tpsAutres = 0,
-						 $delaiPrevu = null, $etat = null, $client = null, $contremarque = null, $mesure = null, $dateMesure = null, $aMateriaux = null, $aNatures = null, $aPrestations = null,
-						 $datePrestations = null, $remarques = null, $pbQualites = null)
+						 $delaiPrevu = null, $etat = null, $client = null, $contremarque = null, $mesure = null, $dateMesure = null, $datePrestations = null,  $aMateriaux = null, $aNatures = null, $aPrestations = null,
+						 $remarques = null, $pbQualites = null)
 	{
 	
 		$this->setIdentifier($identifier);
@@ -250,10 +250,10 @@ class Commande
 		$this->setContremarque($contremarque);
 		$this->setMesure($mesure);
 		$this->setDateMesure($dateMesure);
+		$this->setDatePrestations($datePrestations);
 		$this->setAMateriaux($aMateriaux);
 		$this->setANatures($aNatures);
 		$this->setAPrestations($aPrestations);
-		$this->setDatePrestations($datePrestations);
 		$this->setARemarques($remarques);
 		$this->setAPbQualites($pbQualites);
 	}
@@ -377,6 +377,148 @@ class Commande
 		{
 			exit($e->getMessage());
 		}
+	}
+
+	//Récupère toutes les informations d'une commande à partir de son identifier
+	function getCommande()
+	{
+		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
+		$reponse = $bdd->prepare('SELECT c.Identifier, c.NumCmd, c.Montant, c.Arrhes, c.DateCommande, c.AdresseChantier, c.TpsDebit, c.TpsCmdNumerique, c.TpsFinition, c.TpsAutres, c.DelaiPrevu, c.IdentifierEtat, e.Label, '.
+								'c.IdentifierClient, cl.Nom, c.IdentifierContremarque, cm.Nom, c.IdentifierMesure, m.Label, c.DateMesure, c.DateFinalisations '.
+								'FROM Commande as c '.
+								'INNER JOIN Etat as e ON e.Identifier = c.IdentifierEtat '.
+								'INNER JOIN Client as cl ON cl.Identifier = c.IdentifierClient '.
+								'INNER JOIN Contremarque as cm ON cm.Identifier = c.IdentifierContremarque '.
+								'INNER JOIN Mesure as m ON m.Identifier = c.IdentifierMesure '.
+								'WHERE NumCmd=?');
+		
+		$reponse->execute(array($this->getNumeroCommande()));
+		
+		while($donnees = $reponse->fetch())
+		{
+			$dCommande = new MyTime();
+			$dCommande->DBDate($donnees[4]);
+			
+			$dDelai = new MyTime();
+			$dDelai->DBDate($donnees[10]);
+			
+			$dReleve = new MyTime();
+			$dReleve->DBDate($donnees[19]);
+			
+			$dPrestations = new MyTime();
+			$dPrestations->DBDate($donnees[20]);
+			
+			$this->setIdentifier($donnees[0]);
+			$this->setNumeroCommande($donnees[1]);
+			$this->setMontant($donnees[2]);
+			$this->setArrhes($donnees[3]);
+			$this->setDateCommande($dCommande);
+			$this->setAdresseChantier($donnees[5]);
+			$this->setTpsDebit($donnees[6]);
+			$this->setTpsCmdNumerique($donnees[7]);
+			$this->setTpsFinition($donnees[8]);
+			$this->setTpsAutres($donnees[9]);
+			$this->setDelaiPrevu($dDelai);
+			$this->setEtat(new Etat($donnees[11], $donnees[12]));
+			$this->setClient(new Client($donnees[13], $donnees[14]));
+			$this->setContremarque(new Contremarque($donnees[15], $donnees[16]));
+			$this->setMesure(new Mesure($donnees[17], $donnees[18]));
+			$this->setDateMesure($dReleve);
+			$this->setDatePrestations($dPrestations);
+		}
+		
+		$reponse->closeCursor();
+		
+		// Récupère les matériaux
+		$reponse = $bdd->prepare('SELECT cm.Identifier_Materiau, cm.Epaisseur, m.Label '.
+								'FROM Commande_Materiau as cm '.
+								'INNER JOIN Materiau as m ON m.Identifier = cm.Identifier_Materiau '.
+								'WHERE cm.Identifier_Commande=?');
+		$reponse->execute(array($this->getIdentifier()));
+		
+		$materiaux = array();
+		
+		while($donnees = $reponse->fetch())
+		{
+			$mat = new Materiau($donnees[0], $donnees[2], $donnees[1]);
+			array_push($materiaux, $mat);
+		}
+		
+		$reponse->closeCursor();
+		
+		// Récupère les natures
+		$reponse = $bdd->prepare('SELECT cn.Identifier_Nature, n.Label '.
+								'FROM Commande_Nature as cn '.
+								'INNER JOIN Nature as n ON n.Identifier = cn.Identifier_Nature '.
+								'WHERE cn.Identifier_Commande=?');
+		$reponse->execute(array($this->getIdentifier()));
+		
+		$natures = array();
+		
+		while($donnees = $reponse->fetch())
+		{
+			$nat = new Nature($donnees[0], $donnees[1]);
+			array_push($natures, $nat);
+		}
+		
+		$reponse->closeCursor();
+		
+		// Récupère les prestations
+		$reponse = $bdd->prepare('SELECT cf.Identifier_Finalisation, f.Label '.
+								'FROM Commande_Finalisation as cf '.
+								'INNER JOIN Finalisation as f ON f.Identifier = cf.Identifier_Finalisation '.
+								'WHERE cf.Identifier_Commande=?');
+		$reponse->execute(array($this->getIdentifier()));
+		
+		$prestations = array();
+		
+		while($donnees = $reponse->fetch())
+		{
+			$prest = new Prestation($donnees[0], $donnees[1]);
+			array_push($prestations, $prest);
+		}
+		
+		$reponse->closeCursor();
+		
+		// Récupère les remarques
+		$reponse = $bdd->prepare('SELECT Identifier, Source, Date, Commentaire '.
+								'FROM Remarque '.
+								'WHERE IdentifierCommande=?');
+		$reponse->execute(array($this->getIdentifier()));
+		
+		$remarques = array();
+		
+		while($donnees = $reponse->fetch())
+		{
+			$rem = new Remarque($donnees[0], $donnees[1], $donnees[2], $donnees[3]);
+			array_push($remarques, $rem);
+		}
+		
+		$reponse->closeCursor();
+		
+		// Récupère les problèmes de qualité
+		$reponse = $bdd->prepare('SELECT cq.Source, cq.DateProbleme, q.Identifier, q.Type, cq.Remarque '.
+								'FROM Commande_Qualite as cq '.
+								'INNER JOIN Qualite as q ON q.Identifier = cq.Identifier_Qualite '.
+								'WHERE Identifier_Commande=?');
+		$reponse->execute(array($this->getIdentifier()));
+		
+		$pbQualites = array();
+		
+		while($donnees = $reponse->fetch())
+		{
+			$pb = new ProblemeQlt($donnees[0], $donnees[1], new Qualite($donnees[2], $donnees[3]), $donnees[4]);
+			array_push($pbQualites, $pb);
+		}
+		
+		$reponse->closeCursor();
+		
+		//Mise à jour des paramètres de la commande
+		$this->setAMateriaux($materiaux);
+		$this->setANatures($natures);
+		$this->setAPrestations($prestations);
+		$this->setARemarques($remarques);
+		$this->setAPbQualites($pbQualites);
 	}
 // Méthodes
 }

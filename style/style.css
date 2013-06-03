@@ -200,7 +200,7 @@ td, #afficheNbResult{
 	display:none;
 	padding-top:3%;
 }
-.boutonSuppression{
+.boutonSuppression, .boutonOeil{
 	height:30px;
 }
 .interligne{

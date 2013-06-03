@@ -2,23 +2,13 @@
 class ProblemeQlt
 {
 // Attributs
-	private $_Identifier;
 	private $_Source;
 	private $_DateHeure;
 	private $_Qualite;
 	private $_Commentaire;
 // Attributs
 
-// Properties
-	function getIdentifier()
-	{
-		return $this->_Identifier;
-	}
-	function setIdentifier($identifier)
-	{
-		$this->_Identifier = $identifier;
-	}
-	
+// Properties	
 	function getSource()
 	{
 		return $this->_Source;
@@ -57,9 +47,8 @@ class ProblemeQlt
 // Properties
 
 // Constructor
-	function __construct($identifier = 0, $source = '', $dateHeure = '', $qualite = null, $commentaire = '')
+	function __construct($source = '', $dateHeure = '', $qualite = null, $commentaire = '')
 	{
-		$this->setIdentifier($identifier);
 		$this->setSource($source);
 		$this->setDateHeure($dateHeure);
 		$this->setQualite($qualite);

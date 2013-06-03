@@ -112,6 +112,20 @@ class MyTime
 		$this->setSeconde($time[2]);
 	}
 	
+	function DBDate($sdate)
+	{
+		$array = explode(" ", $sdate);
+		$date = explode("-", $array[0]);
+		$time = explode(":", $array[1]);
+		
+		$this->setJour($date[2]);
+		$this->setMois($date[1]);
+		$this->setAnnee($date[0]);
+		$this->setHeure($time[0]);
+		$this->setMinute($time[1]);
+		$this->setSeconde($time[2]);
+	}
+	
 	function FTBDD()
 	{
 		if($this->getJour() < 10 && strlen($this->getJour()) == 1){$this->setJour('0'.$this->getJour());}

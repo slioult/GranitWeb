@@ -95,7 +95,7 @@ else
 		for($i = 1; $i <= $_POST['countQualites']; $i++)
 		{
 			$array = explode(";", $_POST['qlt'.$i]);
-			$pbQlt = new ProblemeQlt(0, $array[0], str_replace("/", "-", str_replace("h", ":", $array[1]).':00'), new Qualite($array[2]), $array[3]);
+			$pbQlt = new ProblemeQlt($array[0], str_replace("/", "-", str_replace("h", ":", $array[1]).':00'), new Qualite($array[2]), $array[3]);
 			array_push($pbQualites, $pbQlt);
 		}
 		
@@ -115,10 +115,10 @@ else
 								 $contremarque,
 								 $releve,
 								 $dateReleve,
+								 $datePrestations,
 								 $materiaux,
 								 $natures,
 								 $prestations,
-								 $datePrestations,
 								 $remarques,
 								 $pbQualites);
 		$commande->ajoute();
