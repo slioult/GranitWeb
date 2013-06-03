@@ -155,11 +155,16 @@ td, #afficheNbResult{
 	margin-left:-1%;
 	margin-right:1%;
 }
-.valueElement{
+.valueElement, .valueElementLeft{
 	font-size:100%;
+	text-align:center;
+}
+.valueElementLeft{
+	text-align:left;
 }
 .composants{
 	font-size:150%;
+	vertical-align:middle;
 }
 .ligne{
 	text-align:center;

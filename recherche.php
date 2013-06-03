@@ -26,6 +26,15 @@ else
 ?>
 <title>Mayenne Granits</title>
 <script>
+function envoi(btn)
+{
+	var cel = btn.parentNode;
+	var hd = document.createElement('input');
+	hd.type = "hidden";
+	hd.value = btn.id;
+	hd.name = 'UpdNumeroCommande';
+	cel.appendChild(hd);
+}
 </script>
 
 
@@ -122,7 +131,8 @@ else
 											Order By c.DelaiPrevu');
 				}
 				
-				echo '<form method="post" action="saisie.php">';
+				echo '<form method="post" action="saisie.php" >
+					  <input type="hidden" value="update" name="saveType" />';
 				
 				echo '<p id="afficheNbResult">Nombre de résultats : '.$reponse->rowCount().'</p>';
 				
@@ -136,12 +146,11 @@ else
 				while($donnees = $reponse->fetch())
 				{
 					echo '<tr>
-							<input type="hidden" value='.$donnees['NumCmd'].' name="UpdNumeroCommande" />
 							<td>'.$donnees['NumCmd'].'</td>
 							<td>'.$donnees['cli'].'<br/>'.$donnees['cmq'].'</td>
 							<td>'.$donnees['Label'].'</td>
 							<td>'.date("d/m/Y", strtotime($donnees['DelaiPrevu'])).'</td>
-							<td><input class="boutonOeil" type="image" src="images/oeil.png"/></td>
+							<td><input class="boutonOeil" type="image" src="images/oeil.png" id="'.$donnees['NumCmd'].'" onClick="envoi(this)" /></td>
 						  </tr>';
 				}
 				

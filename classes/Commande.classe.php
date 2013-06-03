@@ -520,6 +520,58 @@ class Commande
 		$this->setARemarques($remarques);
 		$this->setAPbQualites($pbQualites);
 	}
+	
+	// Mise à jour d'une commande
+	function update()
+	{
+		//Récupère l'id du client s'il existe déjà
+		$this->getClient()->getId();
+			
+		//Crée le client et récupère son id s'il n'existe pas
+		if($this->getClient()->getIdentifier() == 0)
+		{
+			$this->getClient()->insert();
+			$this->getClient()->getId();
+		}
+		
+		//Récupère l'id de la contremarque si elle existe déjà
+		$this->getContremarque()->getId();
+		
+		//Crée la contremarque et récupère son id si elle n'existe pas
+		if($this->getContremarque()->getIdentifier() == 0)
+		{
+			$this->getContremarque()->insert();
+			$this->getContremarque()->getId();
+		}
+	
+		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
+		
+		$reponse = $bdd->prepare('UPDATE Commande SET NumCmd=?, Montant=?, Arrhes=?, DateCommande=?, AdresseChantier=?, TpsDebit=?, TpsCmdNumerique=?, TpsFinition=?, TpsAutres=?, '.
+													 'DelaiPrevu=?, IdentifierEtat=?, IdentifierClient=?, IdentifierContremarque=?, IdentifierMesure=?, DateMesure=?, DateFinalisations=? '.
+								 'WHERE Identifier=?');
+								 
+		$reponse->execute(array($this->getNumeroCommande(), str_replace(",", ".", $this->getMontant()), str_replace(",", ".", $this->getArrhes()), $this->getDateCommande()->FTBDD(),
+								$this->getAdresseChantier(), $this->getTpsDebit(), $this->getTpsCmdNumerique(), $this->getTpsFinition(), $this->getTpsAutres(), $this->getDelaiPrevu()->FTBDD(),
+								$this->getEtat()->getIdentifier(), $this->getClient()->getIdentifier(), $this->getContremarque()->getIdentifier(), $this->getMesure()->getIdentifier(),
+								$this->getDateMesure()->FTBDD(), $this->getDatePrestations()->FTBDD(), $this->getIdentifier()));
+		$reponse->closeCursor();
+	}
+	
+	// Mise à jour d'une commande limitée --> Seulement temps de prod, état, remarques et pb de qualité
+	function limitUpdate()
+	{
+		//Récupère l'id du client s'il existe déjà
+		$this->getClient()->getId();
+		
+		//Récupère l'id de la contremarque si elle existe déjà
+		$this->getContremarque()->getId();
+	
+		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
+		$reponse = $bdd->prepare('UPDATE Commande SET TpsDebit=?, TpsCmdNumerique=?, TpsFinition=?, TpsAutres=?, IdentifierEtat=? '.
+								 'WHERE Identifier=?');
+		$reponse->execute(array($this->getTpsDebit(), $this->getTpsCmdNumerique(), $this->getTpsFinition(), $this->getTpsAutres(), $this->getEtat()->getIdentifier(), $this->getIdentifier()));
+		$reponse->closeCursor();
+	}
 // Méthodes
 }
 ?>

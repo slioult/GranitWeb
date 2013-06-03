@@ -7,35 +7,7 @@ if(empty($_SESSION['login']))
 }
 ?>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Refresh" content="3;URL=accueil.php" />
 <?php
-include 'style/Mobile_Detect.php';
-$detect = new Mobile_Detect();
-if ($detect->isMobile() OR $detect->isTablet())
-{
-	echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"style/mobile_style.css\" media=\"screen\" />";
-}
-else
-{
-	echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"style/style.css\" media=\"screen\" />";
-}
-?>
-<title>Mayenne Granits</title>
-<script>
-</script>
-<style>
-</style>
-</head>
-
-<body>
-
-	<div id="page">
-		
-		<?php
 		function chargerClasse($classe)
 		{
 			require 'classes/'.$classe.'.classe.php';
@@ -121,10 +93,81 @@ else
 								 $prestations,
 								 $remarques,
 								 $pbQualites);
-		$commande->ajoute();
-		echo '<h1 id="centrer_titre">Mayenne <br /> Granits</h1>
-		<br /> <br /> <br /><br /> <br /> <br />
-		<h2 style="margin-bottom:20%;">La commande n°'.$commande->getNumeroCommande().' a été ajoutée avec succès. <br /> <br /> Vous allez être redirigé automatiquement.</h2>';
+								 
+		$existe = $commande->isExisteCommande();
+?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<?php
+if(!$existe)
+{
+	echo '<meta http-equiv="Refresh" content="3;URL=accueil.php" />';
+}
+elseif($_POST['saveType'] == 'new')
+{
+	echo '<meta http-equiv="Refresh" content="3;URL=saisie.php" />';
+}
+else
+{
+	echo '<meta http-equiv="Refresh" content="3;URL=accueil.php" />';
+}
+?>
+<?php
+include 'style/Mobile_Detect.php';
+$detect = new Mobile_Detect();
+if ($detect->isMobile() OR $detect->isTablet())
+{
+	echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"style/mobile_style.css\" media=\"screen\" />";
+}
+else
+{
+	echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"style/style.css\" media=\"screen\" />";
+}
+?>
+<title>Mayenne Granits</title>
+<script>
+</script>
+<style>
+</style>
+</head>
+
+<body>
+
+	<div id="page">
+		
+		<?php
+		if(!$existe AND $_POST['saveType'] == 'new')
+		{
+			$commande->ajoute();
+			echo '<h1 id="centrer_titre">Mayenne <br /> Granits</h1>
+			<br /> <br /> <br /><br /> <br /> <br />
+			<h2 style="margin-bottom:20%;">La commande n°'.$commande->getNumeroCommande().' a été ajoutée avec succès. <br /> <br /> Vous allez être redirigé automatiquement.</h2>';
+		}
+		elseif($existe AND $_POST['saveType'] == 'new')
+		{
+			$_SESSION['ErrNumeroCommande'] = serialize($commande);
+			echo '<h1 id="centrer_titre">Mayenne <br /> Granits</h1>
+			<br /> <br /> <br /><br /> <br /> <br />
+			<h2 style="margin-bottom:20%;">La commande n°'.$commande->getNumeroCommande().' existe déjà. Vous devez modifier le numéro de commande. <br /> <br /> Vous allez être redirigé automatiquement.</h2>';
+		}
+		elseif($existe AND $_POST['saveType'] == 'update')
+		{
+			if($_SESSION['IsAddCmd'])
+			{
+				$commande->update();
+			}
+			elseif($_SESSION['IsUpdCmd'])
+			{
+				$commande->limitUpdate();
+			}
+			
+			echo '<h1 id="centrer_titre">Mayenne <br /> Granits</h1>
+			<br /> <br /> <br /><br /> <br /> <br />
+			<h2 style="margin-bottom:20%;">La commande n°'.$commande->getNumeroCommande().' a été modifiée avec succès. <br /> <br /> Vous allez être redirigé automatiquement.</h2>';
+		}
 		?>
 	</div>
 

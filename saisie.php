@@ -5,7 +5,7 @@ if(empty($_SESSION['login']))
 {
 	header('location:index.php');
 }
-elseif(!$_SESSION['IsAddCmd'])
+elseif(!$_SESSION['IsAddCmd'] AND empty($_POST['UpdNumeroCommande']))
 {
 	header('location:accueil.php');
 }
@@ -281,70 +281,78 @@ function change_onglet(name)
 // Envoi le formulaire
 function envoi()
 {
-	var error = '';
-	if(document.getElementsByName('numCommande')[0].value != '')
+	if(isUpd == 1)
 	{
-		if(document.getElementsByName('client')[0].value != '')
+		var error = '';
+		if(document.getElementsByName('numCommande')[0].value != '')
 		{
-			if(document.getElementsByName('contremarque')[0].value != '')
+			if(document.getElementsByName('client')[0].value != '')
 			{
-				if(document.getElementsByName('delaiJour')[0].value != 0 && document.getElementsByName('delaiMois')[0].value != 0 && document.getElementsByName('delaiAnnee')[0].value != 0)
+				if(document.getElementsByName('contremarque')[0].value != '')
 				{
-					if(document.getElementsByName('achevJour')[0].value != 0 && document.getElementsByName('achevMois')[0].value != 0 && document.getElementsByName('achevAnnee')[0].value != 0)
+					if(document.getElementsByName('delaiJour')[0].value != 0 && document.getElementsByName('delaiMois')[0].value != 0 && document.getElementsByName('delaiAnnee')[0].value != 0)
 					{
-						if(document.getElementsByName('releve')[0].value != 0)
+						if(document.getElementsByName('achevJour')[0].value != 0 && document.getElementsByName('achevMois')[0].value != 0 && document.getElementsByName('achevAnnee')[0].value != 0)
 						{
-							if(document.getElementsByName('releveJour')[0].value != 0 && document.getElementsByName('releveMois')[0].value != 0 && document.getElementsByName('releveAnnee')[0].value != 0)
+							if(document.getElementsByName('releve')[0].value != 0)
 							{
-								return true;
+								if(document.getElementsByName('releveJour')[0].value != 0 && document.getElementsByName('releveMois')[0].value != 0 && document.getElementsByName('releveAnnee')[0].value != 0)
+								{
+									return true;
+								}
+								else
+								{
+									error = 'Veuillez saisir la date de relevé';
+								}
 							}
 							else
 							{
-								error = 'Veuillez saisir la date de relevé';
+								error = 'Veuillez choisir le type de relevé';
 							}
 						}
 						else
 						{
-							error = 'Veuillez choisir le type de relevé';
+							document.getElementsByName('achevJour')[0].selectedIndex = document.getElementsByName('delaiJour')[0].selectedIndex;
+							document.getElementsByName('achevMois')[0].selectedIndex = document.getElementsByName('delaiMois')[0].selectedIndex;
+							document.getElementsByName('achevAnnee')[0].selectedIndex = document.getElementsByName('delaiAnnee')[0].selectedIndex;
+							
+							error = 'La date d\'achèvement a été modifiée automatiquement, veuillez la vérifier';
 						}
 					}
 					else
 					{
-						document.getElementsByName('achevJour')[0].selectedIndex = document.getElementsByName('delaiJour')[0].selectedIndex;
-						document.getElementsByName('achevMois')[0].selectedIndex = document.getElementsByName('delaiMois')[0].selectedIndex;
-						document.getElementsByName('achevAnnee')[0].selectedIndex = document.getElementsByName('delaiAnnee')[0].selectedIndex;
-						
-						error = 'La date d\'achèvement a été modifiée automatiquement, veuillez la vérifier';
+						error = 'Veuillez saisir un délai valide';
 					}
 				}
 				else
 				{
-					error = 'Veuillez saisir un délai valide';
+					error = 'Veuillez saisir un nom de contremarque';
 				}
 			}
 			else
 			{
-				error = 'Veuillez saisir un nom de contremarque';
+				error = 'Veuillez saisir un nom de client';
 			}
 		}
 		else
 		{
-			error = 'Veuillez saisir un nom de client';
+			error = 'Veuillez saisir un numéro de commande';
+		}
+		
+		if(error != '')
+		{
+			alert(error);
+			return false;
 		}
 	}
 	else
 	{
-		error = 'Veuillez saisir un numéro de commande';
-	}
-	
-	if(error != '')
-	{
-		alert(error);
 		return false;
 	}
 }
 
 var session;
+var isUpd;
 init();
 var anc_onglet = 'general';
 
@@ -352,6 +360,7 @@ var anc_onglet = 'general';
 function init()
 {
 	session = \''.$_SESSION['login'].'\';
+	isUpd = \''.$_SESSION['IsUpdCmd'].'\';
 }
 ';?>
 </script>
@@ -367,11 +376,12 @@ function init()
 		</div>
 		
 		<form method="post" action="interface_sauvegarde.php" onSubmit="return envoi()">
+			<input type="hidden" value="<?php if(!empty($_POST['saveType']) AND $_POST['saveType'] == 'update'){ echo 'update'; }else{ echo 'new'; } ?>" name="saveType" />
 			<?php
 			echo '<input type="hidden" name="idCommande" value="'.$_POST['idCommande'].'"/>';
 			?>
 			<div>
-				<input id="save_bouton" type="image" src="images/save.png" />
+				<?php if($_SESSION['IsUpdCmd']){ echo '<input id="save_bouton" type="image" src="images/save.png" />'; } ?>
 			</div>
 			<h1 id="centrer_titre">Saisie</h1>
 			<div class="systeme_onglets">
@@ -383,7 +393,7 @@ function init()
 				</div>
 				<div class="contenu_onglets">
 					<?php 
-					if (empty($_POST['UpdNumeroCommande']) AND empty($_POST['ErrNumeroCommande']))
+					if (empty($_POST['UpdNumeroCommande']) AND empty($_SESSION['ErrNumeroCommande']))
 					{
 						include 'saisie_nouvelle.php'; 
 					}

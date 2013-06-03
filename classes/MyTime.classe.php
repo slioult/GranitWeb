@@ -135,6 +135,12 @@ class MyTime
 		if($this->getSeconde() < 10 && strlen($this->getSeconde()) == 1){$this->setSeconde('0'.$this->getSeconde());}
 		return $this->getAnnee().'-'.$this->getMois().'-'.$this->getJour().' '.$this->getHeure().':'.$this->getMinute().':'.$this->getSeconde();
 	}
+	
+	function MinToHMin()
+	{
+		$this->setHeure(floor($this->getMinute() / 60));
+		$this ->setMinute($this->getMinute() % 60);
+	}
 	// Méthodes
 }
 ?>
