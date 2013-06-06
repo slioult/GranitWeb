@@ -7,6 +7,14 @@ if(empty($_SESSION['login']))
 }
 ?>
 
+<?php
+function chargerClasse($classe)
+{
+	require 'classes/'.$classe.'.classe.php';
+}
+spl_autoload_register('chargerClasse');
+?>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -84,6 +92,8 @@ function envoi(btn)
 					$cond='e.Label<>\'\'';
 				}
 				
+				$recupereContremarque = false;
+				
 				if($_POST['client'] != '' AND $_POST['contremarque'] != '' AND $_POST['client'] != 'Client' AND $_POST['contremarque'] != 'Contremarque')
 				{
 					$reponse = $bdd->prepare('SELECT c.NumCmd, c.Montant, c.DelaiPrevu, e.Label, cl.Nom as cli, cm.Nom as cmq
@@ -98,15 +108,16 @@ function envoi(btn)
 				}
 				elseif(!empty($_POST['client']) AND $_POST['client'] != 'Client')
 				{
-					$reponse = $bdd->prepare('SELECT c.NumCmd, c.Montant, c.DelaiPrevu, e.Label, cl.Nom as cli, cm.Nom as cmq
+					$reponse = $bdd->prepare('SELECT c.NumCmd, c.Montant, c.DelaiPrevu, e.Label, cl.Nom as cli, c.IdentifierContremarque 
 											FROM Commande as c 
 											INNER JOIN Etat as e ON e.Identifier = c.IdentifierEtat
 											INNER JOIN Client as cl ON cl.Identifier = c.IdentifierClient
-											INNER JOIN Contremarque as cm ON cm.Identifier = c.IdentifierContremarque
 											WHERE cl.Nom Like ? AND '.$cond.' 
 											Order By c.DelaiPrevu');
 											
 					$reponse->execute(array("%".$_POST['client']."%"));
+					
+					$recupereContremarque = true;
 				}
 				elseif(! empty($_POST['contremarque']) AND $_POST['contremarque'] != 'Contremarque')
 				{
@@ -122,13 +133,13 @@ function envoi(btn)
 				}
 				else
 				{
-					$reponse = $bdd->query('SELECT c.NumCmd, c.Montant, c.DelaiPrevu, e.Label, cl.Nom as cli, cm.Nom as cmq
+					$reponse = $bdd->query('SELECT c.NumCmd, c.Montant, c.DelaiPrevu, e.Label, cl.Nom as cli, IdentifierContremarque
 											FROM Commande as c 
 											INNER JOIN Etat as e ON e.Identifier = c.IdentifierEtat
 											INNER JOIN Client as cl ON cl.Identifier = c.IdentifierClient
-											INNER JOIN Contremarque as cm ON cm.Identifier = c.IdentifierContremarque
 											WHERE '.$cond.' 
 											Order By c.DelaiPrevu');
+					$recupereContremarque = true;
 				}
 				
 				echo '<form method="post" action="saisie.php" >
@@ -142,16 +153,43 @@ function envoi(btn)
 							<th>État</th>
 							<th>Délai</th>
 							<th></th>';
-							
-				while($donnees = $reponse->fetch())
+				
+				if(!$recupereContremarque)
 				{
-					echo '<tr>
-							<td>'.$donnees['NumCmd'].'</td>
-							<td>'.$donnees['cli'].'<br/>'.$donnees['cmq'].'</td>
-							<td>'.$donnees['Label'].'</td>
-							<td>'.date("d/m/Y", strtotime($donnees['DelaiPrevu'])).'</td>
-							<td><input class="boutonOeil" type="image" src="images/oeil.png" id="'.$donnees['NumCmd'].'" onClick="envoi(this)" /></td>
-						  </tr>';
+					while($donnees = $reponse->fetch())
+					{
+						echo '<tr>
+								<td>'.$donnees['NumCmd'].'</td>
+								<td>'.$donnees['cli'].'<br/>'.$donnees['cmq'].'</td>
+								<td>'.$donnees['Label'].'</td>
+								<td>'.date("d/m/Y", strtotime($donnees['DelaiPrevu'])).'</td>
+								<td><input class="boutonOeil" type="image" src="images/oeil.png" id="'.$donnees['NumCmd'].'" onClick="envoi(this)" /></td>
+							  </tr>';
+					}
+				}
+				else
+				{	
+					while($donnees = $reponse->fetch())
+					{
+						$contremarque = new Contremarque($donnees[5]);
+					
+						if($donnees[5] != 0)
+						{
+							$contremarque = new Contremarque($donnees[5]);
+							$contremarque->getContremarque();
+						}
+						else
+						{print_r('coucou');
+							$contremarque = new Contremarque(0, '');
+						}
+						echo '<tr>
+									<td>'.$donnees['NumCmd'].'</td>
+									<td>'.$donnees['cli'].'<br/>'.$contremarque->getNom().'</td>
+									<td>'.$donnees['Label'].'</td>
+									<td>'.date("d/m/Y", strtotime($donnees['DelaiPrevu'])).'</td>
+									<td><input class="boutonOeil" type="image" src="images/oeil.png" id="'.$donnees['NumCmd'].'" onClick="envoi(this)" /></td>
+								  </tr>';
+					}
 				}
 				
 				$reponse->closeCursor();

@@ -191,8 +191,8 @@ td, #afficheNbResult{
 	color:black;
 	border-bottom:0px solid black;
 	padding-bottom:4px;
-	opacity:0.5;
 }
+	opacity:0.5;
 .contenu_onglet
 {
 	background-color:#c696bf;
@@ -212,4 +212,18 @@ td, #afficheNbResult{
 .interligne{
 	margin-top:1%;
 	margin-bottom:1%;
+}
+.formValideChoix{
+	display:inline-block;
+	right:0px;
+	left:0px;
+	margin:2%;
+	width:100px;
+}
+.divValideChoix{
+	text-align:center;
+}
+.choixSauvegarde{
+	font-size:200%;
+	border-color:yellow;
 }

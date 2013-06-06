@@ -42,6 +42,14 @@ class Prestation
 		$reponse->execute(array($idCommande, $this->getIdentifier()));
 		$reponse->closeCursor();
 	}
+	
+	function supprimeLiens($idCommande)
+	{
+		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
+		$reponse = $bdd->prepare('DELETE FROM Commande_Finalisation WHERE Identifier_Commande=?');
+		$reponse->execute(array($idCommande));
+		$reponse->closeCursor();
+	}
 // Méthodes
 }
 ?>

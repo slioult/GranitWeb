@@ -4,6 +4,7 @@ class Mesure
 // Attributs
 	private $_Identifier;
 	private $_Label;
+	private $_Display;
 // Attributs
 
 // Properties (accesseurs)
@@ -24,13 +25,23 @@ class Mesure
 	{
 		$this->_Label = $label;
 	}
+	
+	function getDisplay()
+	{
+		return $this->_Display;
+	}
+	function setDisplay($display)
+	{
+		$this->_Display = $display;
+	}
 // Properties
 
 // Constructor
-	function __construct($identifier = 0, $label = '')
+	function __construct($identifier = 0, $label = '', $display = false)
 	{
 		$this->setIdentifier($identifier);
 		$this->setLabel($label);
+		$this->setDisplay($display);
 	}
 // Constructor
 }

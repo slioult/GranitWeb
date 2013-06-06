@@ -84,6 +84,14 @@ class Remarque
 		$reponse->execute(array($this->getCommentaire(), $this->getSource(), $this->getDateHeure(), $idCommande));
 		$reponse->closeCursor();
 	}
+	
+	function supprimeLiens($idCommande)
+	{
+		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
+		$reponse = $bdd->prepare('DELETE FROM Remarque WHERE IdentifierCommande=?');
+		$reponse->execute(array($idCommande));
+		$reponse->closeCursor();
+	}
 // Méthodes
 }
 ?>

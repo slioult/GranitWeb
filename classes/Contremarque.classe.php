@@ -56,6 +56,22 @@ class Contremarque
 		
 		$reponse->closeCursor();
 	}
+	
+	//Récupère une contremarque à partir de son identifier
+	function getContremarque()
+	{
+		if($this != null AND $this->getIdentifier() != 0)
+		{
+			$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
+			$reponse = $bdd->prepare('SELECT Nom FROM Contremarque WHERE Identifier = ?');
+			$reponse->execute(array($this->getIdentifier()));
+			
+			while($donnees = $reponse->fetch())
+			{
+				$this->setNom($donnees['Nom']);
+			}
+		}
+	}
 // Méthodes
 }
 ?>

@@ -1,8 +1,6 @@
-﻿
-<?php
+﻿<?php
 class Commande
 {
-
 // Attributs
 	private $_Identifier;
 	private $_NumeroCommande;
@@ -26,6 +24,7 @@ class Commande
 	private $_DatePrestations;
 	private $_ARemarques;
 	private $_APbQualites;
+	private $_Tstamp;
 // Attributs
 	
 // Properties
@@ -166,7 +165,14 @@ class Commande
 	
 	function getDateMesure()
 	{
+		if($this->_DateMesure != null)
+		{
 		return $this->_DateMesure;
+		}
+		else
+		{
+			return null;
+		}
 	}
 	function setDateMesure($dateMesure)
 	{
@@ -226,12 +232,21 @@ class Commande
 	{
 		$this->_APbQualites = $pbQualites;
 	}
+	
+	function getTstamp()
+	{
+		return $this->_Tstamp;
+	}
+	function setTstamp($tstamp)
+	{
+		$this->_Tstamp = $tstamp;
+	}
 // Properties
 
 // Constructor
 	function __construct($identifier = 0, $numCmd = 0, $montant = 0, $arrhes = 0, $dateCommande = null, $adresseChantier = '', $tpsDebit = 0, $tpsCmdNumerique = 0, $tpsFinition = 0, $tpsAutres = 0,
 						 $delaiPrevu = null, $etat = null, $client = null, $contremarque = null, $mesure = null, $dateMesure = null, $datePrestations = null,  $aMateriaux = null, $aNatures = null, $aPrestations = null,
-						 $remarques = null, $pbQualites = null)
+						 $remarques = null, $pbQualites = null, $tstamp = null)
 	{
 	
 		$this->setIdentifier($identifier);
@@ -256,6 +271,7 @@ class Commande
 		$this->setAPrestations($aPrestations);
 		$this->setARemarques($remarques);
 		$this->setAPbQualites($pbQualites);
+		$this->setTstamp($tstamp);
 	}
 // Constructor
 
@@ -263,7 +279,7 @@ class Commande
 	//Retourne un booléen indiquant si la commande existe
 	function isExisteCommande()
 	{
-		$isExists = false;
+		$isExists = 0;
 		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
 		$reponse = $bdd->prepare('SELECT count(NumCmd) as count FROM Commande Where NumCmd=?');
 		$reponse->execute(array($this->getNumeroCommande()));
@@ -272,12 +288,11 @@ class Commande
 		{
 			if($donnees['count'] > 0)
 			{
-				$isExists = true;
+				$isExists = 1;
 			}
 		}
 		
 		$reponse->closeCursor();
-		
 		return $isExists;
 	}
 
@@ -300,7 +315,7 @@ class Commande
 			$this->getContremarque()->getId();
 			
 			//Crée la contremarque et récupère son id si elle n'existe pas
-			if($this->getContremarque()->getIdentifier() == 0)
+			if($this->getContremarque()->getIdentifier() == 0 AND $this->getContremarque()->getNom() != '')
 			{
 				$this->getContremarque()->insert();
 				$this->getContremarque()->getId();
@@ -356,6 +371,8 @@ class Commande
 												'IdentifierEtat, IdentifierClient, IdentifierContremarque, IdentifierMesure, DateMesure, DateFinalisations) '.
 									 'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
 			
+			if($this->getDateMesure() == null){ $this->setDateMesure(new MyTime()); }
+			
 			$reponse->execute(array($this->getNumeroCommande(), str_replace(",", ".", $this->getMontant()), str_replace(",", ".", $this->getArrhes()), $this->getDateCommande()->FTBDD(), $this->getAdresseChantier(), $this->getTpsDebit(),
 									$this->getTpsCmdNumerique(), $this->getTpsFinition(), $this->getTpsAutres(), $this->getDelaiPrevu()->FTBDD(), $this->getEtat()->getIdentifier(),
 									$this->getClient()->getIdentifier(), $this->getContremarque()->getIdentifier(), $this->getMesure()->getIdentifier(), $this->getDateMesure()->FTBDD(),
@@ -384,11 +401,10 @@ class Commande
 	{
 		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
 		$reponse = $bdd->prepare('SELECT c.Identifier, c.NumCmd, c.Montant, c.Arrhes, c.DateCommande, c.AdresseChantier, c.TpsDebit, c.TpsCmdNumerique, c.TpsFinition, c.TpsAutres, c.DelaiPrevu, c.IdentifierEtat, e.Label, '.
-								'c.IdentifierClient, cl.Nom, c.IdentifierContremarque, cm.Nom, c.IdentifierMesure, m.Label, c.DateMesure, c.DateFinalisations '.
+								'c.IdentifierClient, cl.Nom, c.IdentifierContremarque, c.IdentifierMesure, m.Label, c.DateMesure, c.DateFinalisations, c.Tstamp '.
 								'FROM Commande as c '.
 								'INNER JOIN Etat as e ON e.Identifier = c.IdentifierEtat '.
 								'INNER JOIN Client as cl ON cl.Identifier = c.IdentifierClient '.
-								'INNER JOIN Contremarque as cm ON cm.Identifier = c.IdentifierContremarque '.
 								'INNER JOIN Mesure as m ON m.Identifier = c.IdentifierMesure '.
 								'WHERE NumCmd=?');
 		
@@ -403,10 +419,13 @@ class Commande
 			$dDelai->DBDate($donnees[10]);
 			
 			$dReleve = new MyTime();
-			$dReleve->DBDate($donnees[19]);
+			$dReleve->DBDate($donnees[18]);
 			
 			$dPrestations = new MyTime();
-			$dPrestations->DBDate($donnees[20]);
+			$dPrestations->DBDate($donnees[19]);
+			
+			$dTstamp = new MyTime();
+			$dTstamp->DBDate($donnees[20]);
 			
 			$this->setIdentifier($donnees[0]);
 			$this->setNumeroCommande($donnees[1]);
@@ -421,13 +440,20 @@ class Commande
 			$this->setDelaiPrevu($dDelai);
 			$this->setEtat(new Etat($donnees[11], $donnees[12]));
 			$this->setClient(new Client($donnees[13], $donnees[14]));
-			$this->setContremarque(new Contremarque($donnees[15], $donnees[16]));
-			$this->setMesure(new Mesure($donnees[17], $donnees[18]));
+			$this->setContremarque(new Contremarque($donnees[15]));
+			$this->setMesure(new Mesure($donnees[16], $donnees[17]));
 			$this->setDateMesure($dReleve);
 			$this->setDatePrestations($dPrestations);
+			$this->setTstamp($dTstamp);
 		}
 		
 		$reponse->closeCursor();
+		
+		// Récupère la contremarque
+		if($this->getContremarque()->getIdentifier() != 0)
+		{
+			$this->getContremarque()->getContremarque();
+		}
 		
 		// Récupère les matériaux
 		$reponse = $bdd->prepare('SELECT cm.Identifier_Materiau, cm.Epaisseur, m.Label '.
@@ -521,6 +547,23 @@ class Commande
 		$this->setAPbQualites($pbQualites);
 	}
 	
+	//Récupère le time stamp du dernier update
+	function getTimeStamp()
+	{
+		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
+		$reponse = $bdd->prepare('SELECT Tstamp FROM Commande WHERE Identifier=?');
+		$reponse->execute(array($this->getIdentifier()));
+		
+		$tstamp = new MyTime();
+		
+		while($donnees = $reponse->fetch())
+		{
+			$tstamp->DBDate($donnees[0]);
+		}
+		
+		return $tstamp;
+	}
+	
 	// Mise à jour d'une commande
 	function update()
 	{
@@ -543,7 +586,7 @@ class Commande
 			$this->getContremarque()->insert();
 			$this->getContremarque()->getId();
 		}
-	
+
 		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
 		
 		$reponse = $bdd->prepare('UPDATE Commande SET NumCmd=?, Montant=?, Arrhes=?, DateCommande=?, AdresseChantier=?, TpsDebit=?, TpsCmdNumerique=?, TpsFinition=?, TpsAutres=?, '.
@@ -555,6 +598,51 @@ class Commande
 								$this->getEtat()->getIdentifier(), $this->getClient()->getIdentifier(), $this->getContremarque()->getIdentifier(), $this->getMesure()->getIdentifier(),
 								$this->getDateMesure()->FTBDD(), $this->getDatePrestations()->FTBDD(), $this->getIdentifier()));
 		$reponse->closeCursor();
+		
+		//Met à jour les prestations dans la BDD
+		$tempPrest = new Prestation();
+		$tempPrest->supprimeLiens($this->getIdentifier());
+		$tempPrest = null;
+		foreach($this->getAPrestations() as $prest)
+		{
+			$prest->insertLien($this->getIdentifier());
+		}
+		
+		//Met à jour les matériaux dans la BDD
+		$tempMat = new Materiau();
+		$tempMat->supprimeLiens($this->getIdentifier());
+		$tempMat = null;
+		foreach($this->getAMateriaux() as $mat)
+		{
+			$mat->insertLien($this->getIdentifier());
+		}
+		
+		//Met à jour les natures dans la BDD
+		$tempNat = new Nature();
+		$tempNat->supprimeLiens($this->getIdentifier());
+		$tempNat = null;
+		foreach($this->getANatures() as $nat)
+		{
+			$nat->insertLien($this->getIdentifier());
+		}
+		
+		//Met à jour les problèmes de qualité dans la BDD
+		$tempPb = new ProblemeQlt();
+		$tempPb->supprimeLiens($this->getIdentifier());
+		$tempPb = null;
+		foreach($this->getAPbQualites() as $pb)
+		{
+			$pb->insert($this->getIdentifier());
+		}
+		
+		//Met à jour les remarques dans la BDD
+		$tempRem = new Remarque();
+		$tempRem->supprimeLiens($this->getIdentifier());
+		$tempRem = null;
+		foreach($this->getARemarques() as $rem)
+		{
+			$rem->insert($this->getIdentifier());
+		}
 	}
 	
 	// Mise à jour d'une commande limitée --> Seulement temps de prod, état, remarques et pb de qualité
@@ -571,6 +659,24 @@ class Commande
 								 'WHERE Identifier=?');
 		$reponse->execute(array($this->getTpsDebit(), $this->getTpsCmdNumerique(), $this->getTpsFinition(), $this->getTpsAutres(), $this->getEtat()->getIdentifier(), $this->getIdentifier()));
 		$reponse->closeCursor();
+		
+		//Met à jour les problèmes de qualité dans la BDD
+		$tempPb = new ProblemeQlt();
+		$tempPb->supprimeLiens($this->getIdentifier());
+		$tempPb = null;
+		foreach($this->getAPbQualites() as $pb)
+		{
+			$pb->insert($this->getIdentifier());
+		}
+		
+		//Met à jour les remarques dans la BDD
+		$tempRem = new Remarque();
+		$tempRem->supprimeLiens($this->getIdentifier());
+		$tempRem = null;
+		foreach($this->getARemarques() as $rem)
+		{
+			$rem->insert($this->getIdentifier());
+		}
 	}
 // Méthodes
 }

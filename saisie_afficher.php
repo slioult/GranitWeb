@@ -7,7 +7,7 @@ function chargerClasse($classe)
 spl_autoload_register('chargerClasse');
 ?>
 <?php
-if (!empty($_POST['UpdNumeroCommande']))
+if(!empty($_POST['UpdNumeroCommande']))
 {
 	$numCommande = $_POST['UpdNumeroCommande'];
 	$cmd = new Commande(0, $numCommande);
@@ -17,7 +17,6 @@ elseif(!empty($_SESSION['ErrNumeroCommande']))
 {
 	$cmd = unserialize($_SESSION['ErrNumeroCommande']);
 	$_SESSION['ErrNumeroCommande'] = null;
-	print_r($commande);
 }
 
 if(!$_SESSION['IsAddCmd'])
@@ -34,7 +33,8 @@ else
 }
 ?>
 
-<div class="contenu_onglet" id="contenu_onglet_general">
+<div class="contenu_onglet" id="contenu_onglet_general" style="display:none;">
+	<input type="hidden" value="<?php echo($cmd->getTstamp()->FTBDD()); ?>" name="Tstamp" />
 	<div class="ligne">
 		<div class="element">
 			<p class="labelElement">Date :</p>
@@ -347,25 +347,25 @@ else
 	<div class="ligne">
 		<div class="element">
 			<p class="labelElement">Relevé :</p>
-			<select id="releve" name="releve" class="valueElement" <?php echo $okSelect; ?>>
+			<select id="releve" name="releve" class="valueElement"  <?php echo $okSelect; ?>>
 				<?php
-				echo '<option value=\'0\' selected>Choisir</option><br/>';
+				echo '<option value=\'0\' display="0" selected>Choisir</option><br/>';
 				
 				try
 				{
 					$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
 					
-					$reponse = $bdd->query('SELECT Identifier, Label FROM Mesure');
+					$reponse = $bdd->query('SELECT Identifier, Label, Display FROM Mesure');
 					
 					while($donnees = $reponse->fetch())
 					{
 						if($donnees['Identifier'] == $cmd->getMesure()->getIdentifier())
 						{
-							echo '<option value='.$donnees['Identifier'].' selected>'.$donnees['Label'].'</option><br/>';
+							echo '<option value='.$donnees['Identifier'].' display="'.$donnees['Display'].'" selected>'.$donnees['Label'].'</option><br/>';
 						}
 						else
 						{
-							echo '<option value='.$donnees['Identifier'].'>'.$donnees['Label'].'</option><br/>';
+							echo '<option value='.$donnees['Identifier'].' display="'.$donnees['Display'].'" >'.$donnees['Label'].'</option><br/>';
 						}
 					}
 					
@@ -384,6 +384,10 @@ else
 			<p class="labelElement">Date relevé :</p>
 			<select name="releveJour" class="valueElement" <?php echo $okSelect; ?>>
 				<?php
+				if($cmd->getDateMesure()->getJour() == 0)
+				{
+					echo '<option value=0 selected></option><br/>';
+				}
 				for($i = 1; $i <= 31; $i++)
 				{
 					if($i < 10){$i = '0'.$i;}
@@ -400,6 +404,10 @@ else
 			</select>
 			<select name="releveMois" class="valueElement" <?php echo $okSelect; ?>>
 				<?php
+				if($cmd->getDateMesure()->getMois() == 0)
+				{
+					echo '<option value=0 selected></option><br/>';
+				}
 				for($i = 1; $i <= 12; $i++)
 				{
 					if($i < 10){$i = '0'.$i;}
@@ -416,6 +424,10 @@ else
 			</select>
 			<select name="releveAnnee" class="valueElement" <?php echo $okSelect; ?>>
 				<?php
+				if($cmd->getDateMesure()->getAnnee() == 0)
+				{
+					echo '<option value=0 selected></option><br/>';
+				}
 				for($i = 2010; $i <= date("Y") + 2; $i++)
 				{
 					if($i == $cmd->getDateMesure()->getAnnee())
@@ -719,6 +731,7 @@ else
 				<th style="width:auto;">MM</th>
 				<?php
 				if($okDroits){ echo '<th style="width:auto;"/>'; }
+		
 				for($i = 1; $i <= count($cmd->getAMateriaux()); $i++)
 				{
 					echo '<script type="text/javascript">
@@ -737,7 +750,7 @@ else
 									
 								echo 'var id = document.createElement(\'input\');
 									id.type = "hidden";
-									id.value = '.$cmd->getAMateriaux()[$i-1]->getIdentifier().';
+									id.value = \''.$cmd->getAMateriaux()[$i-1]->getIdentifier().';'.$cmd->getAMateriaux()[$i-1]->getEpaisseur().'\';
 									id.name = \'mat'.$i.'\';
 									
 									var textLabel = document.createTextNode(cbx);
@@ -846,6 +859,9 @@ else
 				<?php
 				for($i = 1; $i <= count($cmd->getARemarques()); $i++)
 				{
+					$dt = new MyTime();
+					$dt->DBDate($cmd->getARemarques()[$i-1]->getDateHeure());
+				
 					echo '<script type="text/javascript">
 									var table = document.getElementById(\'listRemarques\');
 									var ligne = document.createElement(\'tr\');
@@ -855,7 +871,7 @@ else
 									var cellRemarque = document.createElement(\'td\');
 									
 									var session = \''.$cmd->getARemarques()[$i-1]->getSource().'\';
-									var dateHeure = \''.$cmd->getARemarques()[$i-1]->getDateHeure().'\';
+									var dateHeure = \''.$dt->formatDateTimeAffichage().'\';
 									var remarque = "'.$cmd->getARemarques()[$i-1]->getCommentaire().'";
 									
 									var textSource = document.createTextNode(session);
@@ -927,7 +943,10 @@ else
 				<th style="width:auto;">Commentaire</th>
 				<?php
 				for($i = 1; $i <= count($cmd->getAPbQualites()); $i++)
-				{
+				{	
+					$dt = new MyTime();
+					$dt->DBDate($cmd->getAPbQualites()[$i-1]->getDateHeure());
+				
 					echo '<script type="text/javascript">
 									var table = document.getElementById(\'listQualites\');
 									var ligne = document.createElement(\'tr\');
@@ -938,9 +957,10 @@ else
 									var cellCommentaire = document.createElement(\'td\');
 									
 									var session = \''.$cmd->getAPbQualites()[$i-1]->getSource().'\';
-									var dateHeure = \''.$cmd->getAPbQualites()[$i-1]->getDateHeure().'\';
+									var dateHeure = \''.$dt->formatDateTimeAffichage().'\';
 									var pbQualite = \''.$cmd->getAPbQualites()[$i-1]->getQualite()->getType().'\';
 									var remarque = "'.$cmd->getAPbQualites()[$i-1]->getCommentaire().'";
+									var idQualite = \''.$cmd->getAPbQualites()[$i-1]->getQualite()->getIdentifier().'\';
 									
 									var textSource = document.createTextNode(session);
 									var textDate = document.createTextNode(dateHeure);
@@ -954,7 +974,7 @@ else
 
 									var id = document.createElement(\'input\');
 									id.type = "hidden";
-									id.value = session + ";" + dateHeure + ";" + pbQualite + ";" + remarque;
+									id.value = session + ";" + dateHeure + ";" + idQualite + ";" + remarque;
 									id.name = \'qlt'.$i.'\';
 
 									ligne.appendChild(id);

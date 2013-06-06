@@ -212,3 +212,18 @@ td, #afficheNbResult{
 	margin-top:1%;
 	margin-bottom:1%;
 }
+.formValideChoix{
+	display:inline-block;
+	right:0px;
+	left:0px;
+	margin:2%;
+}
+.divValideChoix{
+	text-align:center;
+}
+.choixSauvegarde{
+	font-size:150%;
+	background:purple;
+	border-color:yellow;
+	color:white;
+}

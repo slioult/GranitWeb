@@ -128,18 +128,39 @@ class MyTime
 	
 	function FTBDD()
 	{
-		if($this->getJour() < 10 && strlen($this->getJour()) == 1){$this->setJour('0'.$this->getJour());}
-		if($this->getMois() < 10 && strlen($this->getMois()) == 1){$this->setMois('0'.$this->getMois());}
-		if($this->getHeure() < 10 && strlen($this->getHeure()) == 1){$this->setHeure('0'.$this->getHeure());}
-		if($this->getMinute() < 10 && strlen($this->getMinute()) == 1){$this->setMinute('0'.$this->getMinute());}
-		if($this->getSeconde() < 10 && strlen($this->getSeconde()) == 1){$this->setSeconde('0'.$this->getSeconde());}
-		return $this->getAnnee().'-'.$this->getMois().'-'.$this->getJour().' '.$this->getHeure().':'.$this->getMinute().':'.$this->getSeconde();
+		if($this != new MyTime())
+		{
+			if($this->getJour() < 10 && strlen($this->getJour()) == 1){$this->setJour('0'.$this->getJour());}
+			if($this->getMois() < 10 && strlen($this->getMois()) == 1){$this->setMois('0'.$this->getMois());}
+			if($this->getHeure() < 10 && strlen($this->getHeure()) == 1){$this->setHeure('0'.$this->getHeure());}
+			if($this->getMinute() < 10 && strlen($this->getMinute()) == 1){$this->setMinute('0'.$this->getMinute());}
+			if($this->getSeconde() < 10 && strlen($this->getSeconde()) == 1){$this->setSeconde('0'.$this->getSeconde());}
+			return $this->getAnnee().'-'.$this->getMois().'-'.$this->getJour().' '.$this->getHeure().':'.$this->getMinute().':'.$this->getSeconde();
+		}
+		else
+		{
+			return null;
+		}
 	}
 	
 	function MinToHMin()
 	{
 		$this->setHeure(floor($this->getMinute() / 60));
-		$this ->setMinute($this->getMinute() % 60);
+		$this->setMinute($this->getMinute() % 60);
+	}
+	
+	function Equals($mdt)
+	{
+		if($this->getJour() == $mdt->getJour() AND $this->getMois() == $mdt->getMois() AND $this->getAnnee() == $mdt->getAnnee() AND $this->getHeure() == $mdt->getHeure() AND
+			$this->getMinute() == $mdt->getMinute() AND $this->getSeconde() == $mdt->getSeconde())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+		
 	}
 	// Méthodes
 }

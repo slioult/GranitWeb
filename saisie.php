@@ -197,42 +197,45 @@ function ajouteRemarque(remarque, session)
 // value : index du problème de qualité sélectionné
 function ajouteQualite(commentaire, session, value)
 {
-	var table = document.getElementById('listQualites');
-	
-	var ligne = document.createElement('tr');
-	
-	var cellSource = document.createElement('td');
-	var cellDate = document.createElement('td');
-	var cellQualite = document.createElement('td');
-	var cellCommentaire = document.createElement('td');
-	
-	var pbQualite = document.getElementById('qualite').options[value].text;
-	var dateHeure = getDateHeure();
-	var textSource = document.createTextNode(session);
-	var textDate = document.createTextNode(dateHeure);
-	var textQualite = document.createTextNode(pbQualite);
-	var textRemarque = document.createTextNode(commentaire);
-	
-	cellSource.appendChild(textSource);
-	cellDate.appendChild(textDate);
-	cellQualite.appendChild(textQualite);
-	cellCommentaire.appendChild(textRemarque);
-	
-	var count = document.getElementsByName('countQualites')[0].value;
-	count = parseInt(count) + 1;
-	document.getElementsByName('countQualites')[0].value = count;
-	var id = document.createElement('input');
-	id.type = "hidden";
-	id.value = session + ';' + dateHeure + ';' + document.getElementById('qualite').value + ';' + commentaire;
-	id.name = 'qlt' + count;
-	
-	ligne.appendChild(id);
-	ligne.appendChild(cellSource);
-	ligne.appendChild(cellDate);
-	ligne.appendChild(cellQualite);
-	ligne.appendChild(cellCommentaire);
-	
-	table.appendChild(ligne);
+	if(document.getElementById('qualite').value != 0)
+	{
+		var table = document.getElementById('listQualites');
+		
+		var ligne = document.createElement('tr');
+		
+		var cellSource = document.createElement('td');
+		var cellDate = document.createElement('td');
+		var cellQualite = document.createElement('td');
+		var cellCommentaire = document.createElement('td');
+		
+		var pbQualite = document.getElementById('qualite').options[value].text;
+		var dateHeure = getDateHeure();
+		var textSource = document.createTextNode(session);
+		var textDate = document.createTextNode(dateHeure);
+		var textQualite = document.createTextNode(pbQualite);
+		var textRemarque = document.createTextNode(commentaire);
+		
+		cellSource.appendChild(textSource);
+		cellDate.appendChild(textDate);
+		cellQualite.appendChild(textQualite);
+		cellCommentaire.appendChild(textRemarque);
+		
+		var count = document.getElementsByName('countQualites')[0].value;
+		count = parseInt(count) + 1;
+		document.getElementsByName('countQualites')[0].value = count;
+		var id = document.createElement('input');
+		id.type = "hidden";
+		id.value = session + ';' + dateHeure + ';' + document.getElementById('qualite').value + ';' + commentaire;
+		id.name = 'qlt' + count;
+		
+		ligne.appendChild(id);
+		ligne.appendChild(cellSource);
+		ligne.appendChild(cellDate);
+		ligne.appendChild(cellQualite);
+		ligne.appendChild(cellCommentaire);
+		
+		table.appendChild(ligne);
+	}
 }
 
 // Permet de récupérer la date et l'heure actuelles dans un format standard (compris par une base de données)
@@ -259,6 +262,7 @@ function getDateHeure()
 function supprimeLigne(table, btn, type)
 {
 	var ligne = btn.parentNode;
+	var name = ligne.name;
 	
 	table.removeChild(ligne);
 	
@@ -279,7 +283,7 @@ function change_onglet(name)
 }
 
 // Envoi le formulaire
-function envoi()
+function envoi(releve)
 {
 	if(isUpd == 1)
 	{
@@ -288,45 +292,42 @@ function envoi()
 		{
 			if(document.getElementsByName('client')[0].value != '')
 			{
-				if(document.getElementsByName('contremarque')[0].value != '')
+				if(document.getElementsByName('delaiJour')[0].value != 0 && document.getElementsByName('delaiMois')[0].value != 0 && document.getElementsByName('delaiAnnee')[0].value != 0)
 				{
-					if(document.getElementsByName('delaiJour')[0].value != 0 && document.getElementsByName('delaiMois')[0].value != 0 && document.getElementsByName('delaiAnnee')[0].value != 0)
+					if(document.getElementsByName('achevJour')[0].value != 0 && document.getElementsByName('achevMois')[0].value != 0 && document.getElementsByName('achevAnnee')[0].value != 0)
 					{
-						if(document.getElementsByName('achevJour')[0].value != 0 && document.getElementsByName('achevMois')[0].value != 0 && document.getElementsByName('achevAnnee')[0].value != 0)
+						if(document.getElementsByName('releve')[0].value != 0)
 						{
-							if(document.getElementsByName('releve')[0].value != 0)
+							if(document.getElementsByName('releveJour')[0].value != 0 && document.getElementsByName('releveMois')[0].value != 0 && document.getElementsByName('releveAnnee')[0].value != 0)
 							{
-								if(document.getElementsByName('releveJour')[0].value != 0 && document.getElementsByName('releveMois')[0].value != 0 && document.getElementsByName('releveAnnee')[0].value != 0)
-								{
-									return true;
-								}
-								else
-								{
-									error = 'Veuillez saisir la date de relevé';
-								}
+								return true;
+							}
+							else if(releve.options[releve.selectedIndex].getAttribute("display") == 0)
+							{
+								return true;
 							}
 							else
 							{
-								error = 'Veuillez choisir le type de relevé';
+								error = 'Veuillez saisir la date de relevé';
 							}
 						}
 						else
 						{
-							document.getElementsByName('achevJour')[0].selectedIndex = document.getElementsByName('delaiJour')[0].selectedIndex;
-							document.getElementsByName('achevMois')[0].selectedIndex = document.getElementsByName('delaiMois')[0].selectedIndex;
-							document.getElementsByName('achevAnnee')[0].selectedIndex = document.getElementsByName('delaiAnnee')[0].selectedIndex;
-							
-							error = 'La date d\'achèvement a été modifiée automatiquement, veuillez la vérifier';
+							error = 'Veuillez choisir le type de relevé';
 						}
 					}
 					else
 					{
-						error = 'Veuillez saisir un délai valide';
+						document.getElementsByName('achevJour')[0].selectedIndex = document.getElementsByName('delaiJour')[0].selectedIndex;
+						document.getElementsByName('achevMois')[0].selectedIndex = document.getElementsByName('delaiMois')[0].selectedIndex;
+						document.getElementsByName('achevAnnee')[0].selectedIndex = document.getElementsByName('delaiAnnee')[0].selectedIndex;
+						
+						error = 'La date d\'achèvement a été modifiée automatiquement, veuillez la vérifier';
 					}
 				}
 				else
 				{
-					error = 'Veuillez saisir un nom de contremarque';
+					error = 'Veuillez saisir un délai valide';
 				}
 			}
 			else
@@ -375,7 +376,7 @@ function init()
 			<a href="accueil.php"><input id="home_bouton" type="image" src="images/bouton_accueil.png" onclick="window.location='accueil.php'" /></a>
 		</div>
 		
-		<form method="post" action="interface_sauvegarde.php" onSubmit="return envoi()">
+		<form method="post" action="interface_sauvegarde.php" onSubmit="return envoi(releve)">
 			<input type="hidden" value="<?php if(!empty($_POST['saveType']) AND $_POST['saveType'] == 'update'){ echo 'update'; }else{ echo 'new'; } ?>" name="saveType" />
 			<?php
 			echo '<input type="hidden" name="idCommande" value="'.$_POST['idCommande'].'"/>';

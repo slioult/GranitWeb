@@ -1,4 +1,4 @@
-﻿<div class="contenu_onglet" id="contenu_onglet_general">
+﻿<div class="contenu_onglet" id="contenu_onglet_general" style="display:none;">
 	<div class="ligne">
 		<div class="element">
 			<p class="labelElement">Date :</p>
@@ -227,17 +227,17 @@
 			<p class="labelElement">Relevé :</p>
 			<select id="releve" name="releve" class="valueElement">
 				<?php
-				echo '<option value=\'0\' selected>Choisir</option><br/>';
+				echo '<option value=\'0\' display="0" selected>Choisir</option><br/>';
 				
 				try
 				{
 					$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
 					
-					$reponse = $bdd->query('SELECT Identifier, Label FROM Mesure');
+					$reponse = $bdd->query('SELECT Identifier, Label, Display FROM Mesure');
 					
 					while($donnees = $reponse->fetch())
 					{
-						echo '<option value='.$donnees['Identifier'].'>'.$donnees['Label'].'</option><br/>';
+						echo '<option value='.$donnees['Identifier'].' display="'.$donnees['Display'].'" >'.$donnees['Label'].'</option><br/>';
 					}
 					
 					$reponse->closeCursor();
@@ -417,7 +417,7 @@
 		</div>
 	</div>
 </div>
-<div class="contenu_onglet" id="contenu_onglet_composants">
+<div class="contenu_onglet" id="contenu_onglet_composants" style="display:none;">
 	<div class="ligne">
 		<div class="elementTable">
 			<select id="materiau" class="composants">
@@ -517,7 +517,7 @@
 		</div>
 	</div>
 </div>
-<div class="contenu_onglet" id="contenu_onglet_remarque">
+<div class="contenu_onglet" id="contenu_onglet_remarque" style="display:none;">
 	<div class="ligne">
 		<div class="element">
 			<p class="labelElement">Remarque :</p>
@@ -536,7 +536,7 @@
 		</div>
 	</div>
 </div>
-<div class="contenu_onglet" id="contenu_onglet_qualite">
+<div class="contenu_onglet" id="contenu_onglet_qualite" style="display:none;">
 	<div class="ligne">
 		<div class="element">
 			<p class="labelElement">Problème de qualité :</p>

@@ -36,10 +36,18 @@ class Nature
 
 // Méthodes
 	function insertLien($idCommande)
-	{
+	{print_r('idCommande : '.$idCommande.'<br/>idNature : '.$this->getIdentifier());
 		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
 		$reponse = $bdd->prepare('INSERT INTO Commande_Nature (Identifier_Commande, Identifier_Nature) VALUES (?, ?)');
 		$reponse->execute(array($idCommande, $this->getIdentifier()));
+		$reponse->closeCursor();
+	}
+	
+	function supprimeLiens($idCommande)
+	{
+		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
+		$reponse = $bdd->prepare('DELETE FROM Commande_Nature WHERE Identifier_Commande=?');
+		$reponse->execute(array($idCommande));
 		$reponse->closeCursor();
 	}
 // Méthodes

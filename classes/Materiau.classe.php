@@ -1,4 +1,4 @@
-<?php
+ï»¿<?php
 class Materiau
 {
 // Attributs
@@ -45,7 +45,7 @@ class Materiau
 	}
 // Constructor
 
-// Méthodes
+// MÃ©thodes
 	function insertLien($idCommande)
 	{
 		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
@@ -53,6 +53,14 @@ class Materiau
 		$reponse->execute(array($idCommande, $this->getIdentifier(), $this->getEpaisseur()));
 		$reponse->closeCursor();
 	}
-// Méthodes
+	
+	function supprimeLiens($idCommande)
+	{
+		$bdd = new PDO('mysql:host=localhost;dbname=production', 'granit', 'granit');
+		$reponse = $bdd->prepare('DELETE FROM Commande_Materiau WHERE Identifier_Commande=?');
+		$reponse->execute(array($idCommande));
+		$reponse->closeCursor();
+	}
+// MÃ©thodes
 }
 ?>
